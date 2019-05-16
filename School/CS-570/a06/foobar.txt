@@ -1,0 +1,11 @@
+format
+place sourceFile.txt /destinationDirectory
+list
+listblocks
+mkdir /directoryPath
+remove /directoryPath
+dump type /filePath
+dump type block N
+dump type free
+dump type report
+dump type #

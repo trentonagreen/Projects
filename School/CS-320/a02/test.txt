@@ -1,0 +1,5 @@
+add
+sub
+push 13
+get 14
+pop 

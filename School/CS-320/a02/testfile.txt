@@ -1,0 +1,8 @@
+pop
+add
+sub
+mul
+div
+mod
+skip
+push 12

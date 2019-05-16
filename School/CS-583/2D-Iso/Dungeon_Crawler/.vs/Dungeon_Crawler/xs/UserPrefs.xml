@@ -1,0 +1,28 @@
+﻿<Properties StartupConfiguration="{313311CF-AF6C-8553-9C10-8AA9F88538EC}|">
+  <MonoDevelop.Ide.Workbench ActiveDocument="Assets/Scripts/EnemyController.cs">
+    <Files>
+      <File FileName="Assets/Scripts/EnemyController.cs" Line="41" Column="30" />
+      <File FileName="Assets/Scripts/SpriteRender.cs" Line="21" Column="1" />
+      <File FileName="Assets/Scripts/CameraFollow.cs" Line="8" Column="27" />
+      <File FileName="Assets/Scripts/Portal.cs" Line="49" Column="47" />
+      <File FileName="Assets/Scripts/Flower.cs" Line="13" Column="49" />
+      <File FileName="Assets/Scripts/Environment.cs" Line="11" Column="39" />
+      <File FileName="Assets/Scripts/DC_Character_Controller.cs" Line="102" Column="56" />
+      <File FileName="Assets/Scripts/Tower.cs" Line="26" Column="37" />
+      <File FileName="Assets/Scripts/GameManager.cs" Line="20" Column="28" />
+      <File FileName="Assets/Scripts/Credits.cs" Line="14" Column="34" NotebookId="1" />
+      <File FileName="Assets/Scripts/MainMenu.cs" Line="20" Column="6" NotebookId="1" />
+      <File FileName="Assets/Scripts/ControlMenu.cs" Line="18" Column="32" NotebookId="1" />
+      <File FileName="Assets/Scripts/SettingMenu.cs" Line="16" Column="32" NotebookId="1" />
+      <File FileName="Assets/Scripts/MainMenuMusic.cs" Line="14" Column="27" NotebookId="1" />
+      <File FileName="Assets/Scripts/ContinueMenu.cs" Line="4" Column="35" NotebookId="1" />
+    </Files>
+  </MonoDevelop.Ide.Workbench>
+  <MonoDevelop.Ide.DebuggingService.PinnedWatches />
+  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
+  <MonoDevelop.Ide.ItemProperties.Assembly-CSharp PreferredExecutionTarget="60c11185-b792-4a9b-a33c-25823281bcb1" />
+  <MonoDevelop.Ide.DebuggingService.Breakpoints>
+    <BreakpointStore />
+  </MonoDevelop.Ide.DebuggingService.Breakpoints>
+  <MultiItemStartupConfigurations />
+</Properties>

@@ -1,0 +1,16 @@
+﻿<Properties StartupConfiguration="{5974174A-F04B-4324-97A7-D3E780BBF99C}|">
+  <MonoDevelop.Ide.Workbench ActiveDocument="Assets/Scripts/Pickup.cs">
+    <Files>
+      <File FileName="Assets/Scripts/ThrowBall.cs" Line="40" Column="75" />
+      <File FileName="Assets/Scripts/FPS_Controller.cs" Line="9" Column="33" />
+      <File FileName="Assets/Scripts/Pickup.cs" Line="5" Column="18" />
+    </Files>
+  </MonoDevelop.Ide.Workbench>
+  <MonoDevelop.Ide.DebuggingService.PinnedWatches />
+  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
+  <MonoDevelop.Ide.ItemProperties.Assembly-CSharp PreferredExecutionTarget="56da0f62-822a-4c78-ab74-83ddde6c2ce7" />
+  <MonoDevelop.Ide.DebuggingService.Breakpoints>
+    <BreakpointStore />
+  </MonoDevelop.Ide.DebuggingService.Breakpoints>
+  <MultiItemStartupConfigurations />
+</Properties>

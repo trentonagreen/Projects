@@ -1,0 +1,25 @@
+﻿<Properties StartupConfiguration="{6B0FD351-4A63-652A-769F-0C63A99FB83A}|">
+  <MonoDevelop.Ide.Workbench ActiveDocument="Assets/Scripts/FPS_Controller.cs">
+    <Files>
+      <File FileName="Assets/Scripts/FPS_Controller.cs" Line="33" Column="9" />
+      <File FileName="Assets/Scripts/BetterPickUp.cs" Line="15" Column="1" />
+      <File FileName="Assets/Scripts/BallSpawner.cs" Line="29" Column="70" />
+      <File FileName="Assets/Scripts/Catch.cs" Line="10" Column="31" />
+      <File FileName="Assets/Scripts/UIManager.cs" Line="8" Column="1" />
+    </Files>
+    <Pads>
+      <Pad Id="MonoDevelop.UnitTesting.TestPad">
+        <State name="__root__">
+          <Node name="NullTerminatorsBP" expanded="True" selected="True" />
+        </State>
+      </Pad>
+    </Pads>
+  </MonoDevelop.Ide.Workbench>
+  <MonoDevelop.Ide.DebuggingService.PinnedWatches />
+  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
+  <MonoDevelop.Ide.ItemProperties.Assembly-CSharp PreferredExecutionTarget="4c16de71-515e-4c68-ac22-15357cbba031" />
+  <MonoDevelop.Ide.DebuggingService.Breakpoints>
+    <BreakpointStore />
+  </MonoDevelop.Ide.DebuggingService.Breakpoints>
+  <MultiItemStartupConfigurations />
+</Properties>

@@ -17,9 +17,11 @@ public class FlyMovement : MonoBehaviour
         {
             rbDrone.constraints = RigidbodyConstraints.None;
         }
-        if (Input.GetKeyUp(KeyCode.I) || Input.GetKeyUp(KeyCode.K))
+        if (Input.GetKeyUp(KeyCode.I) || Input.GetKeyUp(KeyCode.K) || Input.GetKeyUp(KeyCode.J) || Input.GetKeyUp(KeyCode.L))
         {
-            rbDrone.constraints = RigidbodyConstraints.FreezePositionY;
+            upForce = 0;
+            Invoke("Freeze", .25f);
+            //rbDrone.constraints = RigidbodyConstraints.FreezePositionY;
         }
         //rbDrone.constraints = RigidbodyConstraints.FreezePositionY;
     }
@@ -35,6 +37,11 @@ public class FlyMovement : MonoBehaviour
         rbDrone.AddRelativeForce(Vector3.up * upForce);
         //rbDrone.rotation = Quaternion.Euler(new Vector3(tiltAmountForward, currRotationY, tiltAmountSide));
         rbDrone.rotation = Quaternion.Euler(new Vector3(rbDrone.rotation.x, currRotationY, rbDrone.rotation.z));
+    }
+
+    void Freeze()
+    {
+        rbDrone.constraints = RigidbodyConstraints.FreezePositionY;
     }
 
     public float upForce;

@@ -65,7 +65,7 @@ int findMissing(int *arr, int size) {
 }
 
 int main(int argc, char **argv) {
-  printf("Daily Programming, Day-3\n");
+  printf("Daily Programming, Day-4\n");
   printf("-----------------------------------------------------------------\n");
 
   printf("Given an unsorted array...\n");

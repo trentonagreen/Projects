@@ -5,10 +5,24 @@ using UnityEngine;
 public class FlyMovement : MonoBehaviour
 {
     Rigidbody rbDrone;
+    Transform cameraT;
+
+    public bool lockCursor;
 
     void Awake()
     {
         rbDrone = GetComponent<Rigidbody>();
+    }
+
+    void Start()
+    {
+        cameraT = Camera.main.transform;
+
+        if(lockCursor)
+        {
+            Cursor.lockState = CursorLockMode.Locked;
+            Cursor.visible = false;
+        }
     }
 
     void Update()
@@ -20,12 +34,14 @@ public class FlyMovement : MonoBehaviour
         if (Input.GetKeyUp(KeyCode.I) || Input.GetKeyUp(KeyCode.K) || Input.GetKeyUp(KeyCode.J) || Input.GetKeyUp(KeyCode.L))
         {
             upForce = 0;
-            Invoke("Freeze", .25f);
+            Invoke("Freeze", .5f);
             //rbDrone.constraints = RigidbodyConstraints.FreezePositionY;
         }
         //rbDrone.constraints = RigidbodyConstraints.FreezePositionY;
-    }
+        //transform.localEulerAngles = new Vector3(transform.localEulerAngles.x, Camera.main.transform.localEulerAngles.y, transform.localEulerAngles.z);
+     }
 
+    public float smoothTurnVel;
     void FixedUpdate()
     {
         FlyUpDown();
@@ -35,8 +51,8 @@ public class FlyMovement : MonoBehaviour
         FlyLR();
 
         rbDrone.AddRelativeForce(Vector3.up * upForce);
-        //rbDrone.rotation = Quaternion.Euler(new Vector3(tiltAmountForward, currRotationY, tiltAmountSide));
-        rbDrone.rotation = Quaternion.Euler(new Vector3(rbDrone.rotation.x, currRotationY, rbDrone.rotation.z));
+        rbDrone.rotation = Quaternion.Euler(new Vector3(tiltAmountForward, currRotationY, tiltAmountSide));
+        //rbDrone.rotation = Quaternion.Euler(new Vector3(rbDrone.rotation.x, currRotationY, rbDrone.rotation.z));
     }
 
     void Freeze()
@@ -122,7 +138,7 @@ public class FlyMovement : MonoBehaviour
             wantRotationY += rotateAmountByKeys;
         }
 
-        currRotationY = Mathf.SmoothDamp(currRotationY, wantRotationY, ref rotationVelocityY, 0.25f);
+        currRotationY = Mathf.SmoothDampAngle(currRotationY, cameraT.eulerAngles.y, ref rotationVelocityY, 0.1f);
     }
 
     public Vector3 smoothDampVelocity;

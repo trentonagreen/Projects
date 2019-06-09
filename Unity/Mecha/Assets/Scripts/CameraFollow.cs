@@ -6,7 +6,7 @@ public class CameraFollow : MonoBehaviour
 {
     public Transform transformDrone;
 
-    public float mouseSensitivity = 10f;
+    public float mouseSensitivity = 100f;
     public Transform target;
     public float distFromTarget = 2f;
     public Vector2 pitchRange = new Vector2(-25, 85);
@@ -35,8 +35,10 @@ public class CameraFollow : MonoBehaviour
 
     void LateUpdate()
     {
-        yaw += Input.GetAxis("Mouse X") * mouseSensitivity;
-        pitch -= Input.GetAxis("Mouse Y") * mouseSensitivity;
+        //yaw += Input.GetAxis("Mouse X") * mouseSensitivity;
+        //pitch -= Input.GetAxis("Mouse Y") * mouseSensitivity;
+        yaw += Input.GetAxis("PS4_RightAnalogHorizontal") * mouseSensitivity;
+        pitch += Input.GetAxis("PS4_RightAnalogVertical") * mouseSensitivity;
         pitch = Mathf.Clamp(pitch, pitchRange.x, pitchRange.y);
 
         currRot = Vector3.SmoothDamp(currRot, new Vector3(pitch, yaw), ref rotSmoothVel, rotSmoothTime);

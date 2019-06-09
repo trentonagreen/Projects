@@ -35,10 +35,10 @@ public class CameraFollow : MonoBehaviour
 
     void LateUpdate()
     {
-        //yaw += Input.GetAxis("Mouse X") * mouseSensitivity;
-        //pitch -= Input.GetAxis("Mouse Y") * mouseSensitivity;
-        yaw += Input.GetAxis("PS4_RightAnalogHorizontal") * mouseSensitivity;
-        pitch += Input.GetAxis("PS4_RightAnalogVertical") * mouseSensitivity;
+        yaw += Input.GetAxis("Mouse X") * mouseSensitivity;
+        pitch -= Input.GetAxis("Mouse Y") * mouseSensitivity;
+        //yaw += Input.GetAxis("PS4_RightAnalogHorizontal") * mouseSensitivity;
+        //pitch += Input.GetAxis("PS4_RightAnalogVertical") * mouseSensitivity;
         pitch = Mathf.Clamp(pitch, pitchRange.x, pitchRange.y);
 
         currRot = Vector3.SmoothDamp(currRot, new Vector3(pitch, yaw), ref rotSmoothVel, rotSmoothTime);

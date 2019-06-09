@@ -23,6 +23,8 @@ public class FlyMovement : MonoBehaviour
     void Awake()
     {
         rbDrone = GetComponent<Rigidbody>();
+        rbDrone.interpolation = RigidbodyInterpolation.Interpolate;
+
         startRot = Quaternion.Euler(rbDrone.rotation.x, rbDrone.rotation.y, rbDrone.rotation.z);
         startVel = rbDrone.velocity;
     }

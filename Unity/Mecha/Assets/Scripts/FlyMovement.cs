@@ -13,7 +13,14 @@ public class FlyMovement : MonoBehaviour
     public bool isR2Down = false;
     public bool isR2Up = true;
 
-    private bool isR2;
+    public float lFireRate = 5f;
+    public float rFireRate = 2f;
+    public float lTimer = 0.0f;
+    public float rTimer = 0.0f;
+
+    public Animator animator;
+    public bool canLShoot;
+    public bool canRShoot;
 
     public KeepOriginalPos orignalPos;
 
@@ -38,6 +45,9 @@ public class FlyMovement : MonoBehaviour
             Cursor.lockState = CursorLockMode.Locked;
             Cursor.visible = false;
         }
+
+        animator.SetBool("isRShooting", false);
+        animator.SetBool("isLShooting", false);
     }
 
     void Update()
@@ -50,21 +60,6 @@ public class FlyMovement : MonoBehaviour
 
         /*
             CONTROLLER INPUT
-        */
-
-        /*
-        if(Input.GetButton("PS4_L1"))
-        {
-            rbDrone.drag = 0;
-            rbDrone.constraints = RigidbodyConstraints.None;
-        }
-
-        if(Input.GetButtonUp("PS4_L1"))
-        {
-            upForce = 0;
-            //Invoke("FreezeY", .5f);
-            FreezeY();
-        }
         */
 
         if (Input.GetAxis("Vertical") != 0 || Input.GetAxis("Horizontal") != 0)
@@ -149,17 +144,40 @@ public class FlyMovement : MonoBehaviour
             rbDrone.constraints = RigidbodyConstraints.None;
         }
         */
- 
-        if (Input.GetKey(KeyCode.Space) || Input.GetButton("PS4_R1"))
+
+        lTimer += Time.deltaTime;
+        rTimer += Time.deltaTime;
+
+        if ((Input.GetKey(KeyCode.Space) || Input.GetButton("PS4_R1")) && rTimer > rFireRate)
         {
+            animator.SetBool("isRShooting", true);
+
             Fire();
+            rTimer = 0;
+        }
+        if(Input.GetButtonUp("PS4_R1"))
+        {
+            animator.SetBool("isRShooting", false);
+            canRShoot = false;
         }
 
-        //  ENABLE FOR FAST BULLET SHOOT
-        if(isR2Down)
+        if(!isR2Down)
         {
-            FireBig();
+            animator.SetBool("isLShooting", false);
         }
+
+        //animator.SetBool("isRShooting", false);
+
+        //  ENABLE FOR FAST BULLET SHOOT
+
+        if(isR2Down && lTimer > lFireRate)
+        {
+            animator.SetBool("isLShooting", true);
+
+            FireBig();
+            lTimer = 0;
+        }
+
 
         //Debug.Log(rbDrone.velocity);
         //rbDrone.rotation = Quaternion.Euler(new Vector3(cameraT.eulerAngles.x, currRotationY, rbDrone.rotation.z));
@@ -174,26 +192,9 @@ public class FlyMovement : MonoBehaviour
         FlyClampValues();
         FlyLR();
 
-        //rbDrone.AddRelativeForce(transform.up * upForce);
-        //rbDrone.AddRelativeForce(orignalPos.orignalVectorUp * upForce);
         rbDrone.AddForce(orignalPos.orignalTransUp * upForce);
 
-        //Vector3 movement = new Vector3(Input.GetAxis("Horizontal") * moveForwardSpeed * Time.deltaTime, 0, Input.GetAxis("Vertical") * Time.deltaTime * moveForwardSpeed);
-        //rbDrone.MovePosition(transform.position + movement + transform.forward);
-
-        //rbDrone.MovePosition(transform.position + Vector3.up * upForce * Time.deltaTime);
-
-        //rbDrone.rotation = Quaternion.Euler(new Vector3(tiltAmountForward, currRotationY, tiltAmountSide));
-
-
         rbDrone.rotation = Quaternion.Euler(new Vector3(cameraT.eulerAngles.x, currRotationY, rbDrone.rotation.z));
-
-
-        //rbDrone.rotation = Quaternion.Euler(new Vector3(rbDrone.rotation.x, currRotationY, rbDrone.rotation.z));
-        //if(Input.GetKey(KeyCode.Space))
-        //{
-        //    Fire();
-        //}
     }
 
     void FreezeY()
@@ -209,65 +210,19 @@ public class FlyMovement : MonoBehaviour
     public float upForce;
     void FlyUpDown() 
     {
-        /*
-         * NEW      
-         */
-         /*
-        rbDrone.velocity = rbDrone.velocity;
-        if (Input.GetKey(KeyCode.I) || Input.GetButton("PS4_L1"))
-        {
-            //rbDrone.velocity = rbDrone.velocity;
-            upForce = 30000;
-            //if(Mathf.Abs(Input.GetAxis("Horizontal")) > 0.2f)
-            //{
-            //    upForce = 500;
-            //}
-        }
-        else if (Input.GetKey(KeyCode.K) || isL2Down)
-        {
-            //rbDrone.velocity = rbDrone.velocity;
-            upForce = -2000;
-        }
-        else
-        {
-            upForce = 0;
-            rbDrone.velocity = new Vector3(rbDrone.velocity.x, Mathf.Lerp(rbDrone.velocity.y, 0, Time.deltaTime * 5), rbDrone.velocity.z);
-        }
-        */
-
-        /*
-        if (Mathf.Abs(Input.GetAxis("Vertical")) > 0.2f || Mathf.Abs(Input.GetAxis("Horizontal")) > 0.2f)
-        {
-            if (Input.GetKey(KeyCode.I) || Input.GetKey(KeyCode.K) || Input.GetButtonDown("PS4_L1") || isL2Down)
-            {
-                rbDrone.velocity = rbDrone.velocity;
-            }
-            if (!Input.GetKey(KeyCode.I) && !Input.GetKey(KeyCode.K) || !Input.GetButtonDown("PS4_L1"))
-            {
-                upForce = 450;
-                rbDrone.velocity = new Vector3(rbDrone.velocity.x, Mathf.Lerp(rbDrone.velocity.y, 0, Time.deltaTime * 5), rbDrone.velocity.z);
-                upForce = 281;
-            }
-        }
-        if(Mathf.Abs(Input.GetAxis("Vertical")) < 0.2f && Mathf.Abs(Input.GetAxis("Horizontal")) > 0.2f)
-        {
-            upForce = 135;
-            upForce = 400;
-        }
-        */
         if (Input.GetKey(KeyCode.I) || Input.GetButton("PS4_L1"))
         {
             rbDrone.velocity = rbDrone.velocity;
-            upForce = 2000;
+            upForce = 4000;
             if(Mathf.Abs(Input.GetAxis("Horizontal")) > 0.2f)
             {
-                upForce = 1800;
+                upForce = 3600;
             }
         }
         else if(Input.GetKey(KeyCode.K) || isL2Down)
         {
             rbDrone.velocity = rbDrone.velocity;
-            upForce = -1000;
+            upForce = -2000;
         }
         else if(!Input.GetKey(KeyCode.I) && !Input.GetKey(KeyCode.K) && Input.GetButtonDown("PS4_L1") && (Mathf.Abs(Input.GetAxis("Vertical")) < 0.2f && Mathf.Abs(Input.GetAxis("Horizontal")) < 0.2f))
         {
@@ -278,8 +233,6 @@ public class FlyMovement : MonoBehaviour
             upForce = 0;
             rbDrone.velocity = new Vector3(rbDrone.velocity.x, Mathf.Lerp(rbDrone.velocity.y, 0, Time.deltaTime * 5), rbDrone.velocity.z);
         }
-
-
     }
 
     public float moveForwardSpeed = 500;
@@ -357,13 +310,18 @@ public class FlyMovement : MonoBehaviour
 
     public GameObject _ammoPrefabSmall;
     public Transform _ammoSpawnPointSmall;
-
     public float firePower = 10f;
     public void Fire()
     {
-        GameObject ammo = Instantiate(_ammoPrefabSmall, _ammoSpawnPointSmall.transform.position, Quaternion.identity) as GameObject;
-        Rigidbody ammoRB = ammo.GetComponent<Rigidbody>();
-        ammoRB.AddForce(transform.forward * firePower);
+        if (animator.GetCurrentAnimatorStateInfo(0).IsName("ArmRShootIdle"))
+        {
+            //if (animator.GetCurrentAnimatorStateInfo(0).normalizedTime > 1 && !animator.IsInTransition(0))
+            //{
+                GameObject ammo = Instantiate(_ammoPrefabSmall, _ammoSpawnPointSmall.transform.position, Quaternion.identity) as GameObject;
+                Rigidbody ammoRB = ammo.GetComponent<Rigidbody>();
+                ammoRB.AddForce(transform.forward * firePower);
+            //}
+        }
 
         //Destroy(ammo, 2f);
     }
@@ -373,9 +331,24 @@ public class FlyMovement : MonoBehaviour
 
     public void FireBig()
     {
+        if (animator.GetCurrentAnimatorStateInfo(0).IsName("ArmLShootIdle"))
+        {
+            GameObject ammo = Instantiate(_ammoPrefabBig, _ammoSpawnPointBig.transform.position, Quaternion.identity) as GameObject;
+            Rigidbody ammoRB = ammo.GetComponent<Rigidbody>();
+            ammoRB.AddForce(transform.forward * firePower);
+
+            Vector3 knockback = transform.position - transform.forward;
+            transform.position = Vector3.Lerp(transform.position, knockback, 50 * Time.deltaTime);
+
+        }
+
+        //animator.SetBool("isLShooting", true);
+
+        /*
         GameObject ammo = Instantiate(_ammoPrefabBig, _ammoSpawnPointBig.transform.position, Quaternion.identity) as GameObject;
         Rigidbody ammoRB = ammo.GetComponent<Rigidbody>();
         ammoRB.AddForce(transform.forward * firePower);
+        */      
     }
 
     void EnableButtonForL2()
@@ -383,13 +356,13 @@ public class FlyMovement : MonoBehaviour
         float foo = Input.GetAxisRaw("PS4_L2");
         if (foo < 0)
         {
-            if (!isL2Up) //up
+            if (!isL2Up) 
             {
-                isL2Up = true; //up
+                isL2Up = true; 
             }
-            if (isL2Down)  //down
+            if (isL2Down)  
             {
-                isL2Down = false;  //down
+                isL2Down = false;  
             }
         }
         else if (foo > 0)
@@ -439,6 +412,8 @@ public class FlyMovement : MonoBehaviour
             if(!isR2Down)
             {
                 // FireBig() for buttondown effect, remove for button
+                //animator.SetBool("isLShooting", true);
+
                 //FireBig();
                 isR2Down = true;
             }

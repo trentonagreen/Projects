@@ -11,6 +11,8 @@ public class KeepOriginalPos : MonoBehaviour
     void Start()
     {
         orignalRotation = transform.rotation;
+
+        // enables player to have an orignal up/down transform reference
         orignalTransUp = transform.up;
     }
 

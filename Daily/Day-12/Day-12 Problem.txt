@@ -1,0 +1,4 @@
+The area of a circle is defined as pi*r^2. Estimate pi to 3 dec places using
+the monte carlo method.
+
+Hint: The basic equation of a circle is x^2 + y^2 = r^2.

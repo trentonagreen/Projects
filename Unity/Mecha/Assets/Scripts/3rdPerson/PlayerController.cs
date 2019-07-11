@@ -21,6 +21,7 @@ public class PlayerController : MonoBehaviour
 
     [Header("Hover Settings")]
     public float hover_force;
+    public float clamp_hover;
     public ForceMode force_type;
 
     [Header("Rotate Settings")]
@@ -101,6 +102,9 @@ public class PlayerController : MonoBehaviour
     void Hover(float hover_force, ForceMode type)
     {
         rb.AddRelativeForce(transform.up * hover_force, type);
+
+        // Clamps a max velocity to hover up
+        rb.velocity = new Vector3(rb.velocity.x, Mathf.Clamp(rb.velocity.y, 0, clamp_hover), rb.velocity.z);
     }
 
 }

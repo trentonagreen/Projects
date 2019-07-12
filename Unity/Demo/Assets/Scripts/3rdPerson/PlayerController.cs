@@ -41,6 +41,16 @@ public class PlayerController : MonoBehaviour
     public Animator anim;
     public float InputMagn;
 
+    [Header("Slope Settings")]
+    [SerializeField]
+    private bool onSlope;
+    public float slope_force;
+    public float slope_ray_leng;
+
+    [Header("Strafe Settings")]
+    [SerializeField]
+    private bool isStrafe;
+
     Rigidbody rb;
     Transform cam;
 
@@ -71,7 +81,7 @@ public class PlayerController : MonoBehaviour
         }
 
         // Hover
-        if ((Input.GetButton("PS4_L1")))
+        if ((Input.GetButton("PS4_X")))
         {
             rb.useGravity = false;
             Hover(hover_force, force_type);
@@ -79,6 +89,16 @@ public class PlayerController : MonoBehaviour
         else
         {
             rb.useGravity = true;
+        }
+
+        // Strafe
+        if (Input.GetButton("PS4_R1"))
+        {
+            isStrafe = true;
+        }
+        else
+        {
+            isStrafe = false;
         }
         #endregion
 
@@ -101,9 +121,21 @@ public class PlayerController : MonoBehaviour
 
     private void FixedUpdate()
     {
-        #region Movement
         var hor = Input.GetAxis("Horizontal");
         var ver = Input.GetAxis("Vertical");
+
+        #region Slope Check
+        onSlope = OnSlope();
+
+        if(onSlope)
+        {
+            //rb.AddForce(Vector3.down * slope_force);
+            rb.velocity = Vector3.down * slope_force;
+        }
+        #endregion
+
+        #region Movement
+        
 
         /*
         Vector3 direction = new Vector3(hor, 0, ver);
@@ -112,8 +144,8 @@ public class PlayerController : MonoBehaviour
         rb.MovePosition(transform.position + direction);
         */
 
-        Vector3 forward = cam.transform.forward;
-        Vector3 right = cam.transform.right;
+        Vector3 forward = cam.forward;
+        Vector3 right = cam.right;
 
         forward.y = 0f;
         right.y = 0f;
@@ -126,23 +158,33 @@ public class PlayerController : MonoBehaviour
         #endregion
 
         #region Rotation
-        stor_dir = cam.right;
-        dir_pos = transform.position + (stor_dir * hor) + (cam.forward * ver);
 
-        Vector3 dir = dir_pos - transform.position;
-        dir.y = 0;
 
-        if(hor != 0 || ver != 0)
+        if (!isStrafe)
         {
-            float angle = Quaternion.Angle(transform.rotation, Quaternion.LookRotation(dir));
+            dir_pos = transform.position + (right * hor) + (forward * ver);
 
-            if(angle != 0)
+            Vector3 dir = dir_pos - transform.position;
+            dir.y = 0;
+
+            if (hor != 0 || ver != 0)
             {
-                rb.rotation = Quaternion.Slerp(transform.rotation, Quaternion.LookRotation(dir), turn_speed * Time.deltaTime);
-            }
-        }
+                float angle = Quaternion.Angle(transform.rotation, Quaternion.LookRotation(dir));
 
-        Debug.DrawRay(transform.position, direction, Color.red);
+                if (angle != 0)
+                {
+                    rb.rotation = Quaternion.Slerp(transform.rotation, Quaternion.LookRotation(dir), turn_speed * Time.deltaTime);
+                }
+            }
+
+            Vector3 ray_start = new Vector3(transform.position.x, 1, transform.position.z);
+            Debug.DrawRay(ray_start, dir, Color.green);
+        }
+        // Force player to look in direction of camera
+        else
+        {
+            rb.rotation = Quaternion.Slerp(transform.rotation, Quaternion.LookRotation(cam.forward), turn_speed * Time.deltaTime);
+        }
         #endregion
     }
 
@@ -153,6 +195,21 @@ public class PlayerController : MonoBehaviour
 
         // Clamps a max velocity to hover up
         rb.velocity = new Vector3(rb.velocity.x, Mathf.Clamp(rb.velocity.y, 0, clamp_hover), rb.velocity.z);
+    }
+
+    bool OnSlope()
+    {
+        RaycastHit hit;
+
+        if(Physics.Raycast(transform.position, Vector3.down, out hit, slope_ray_leng))
+        {
+            if(hit.normal != Vector3.up)
+            {
+                return true;
+            }
+        }
+
+        return false;
     }
 
 }

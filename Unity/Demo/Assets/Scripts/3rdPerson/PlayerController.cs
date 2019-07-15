@@ -116,6 +116,61 @@ public class PlayerController : MonoBehaviour
         //{
             //anim.SetFloat("InputMagnitude", anim_speed, 0.0f, Time.deltaTime);
         //}
+
+        if(!isStrafe)
+        {
+            anim.SetBool("isStrafe", false);
+        }
+        else
+        {
+            anim.SetBool("isStrafe", true);
+        }
+        #endregion
+
+        #region Rotation
+
+        Vector3 forward = cam.forward;
+        Vector3 right = cam.right;
+
+        if (!isStrafe)
+        {
+            dir_pos = transform.position + (right * hor) + (forward * ver);
+
+            Vector3 dir = dir_pos - transform.position;
+            dir.y = 0;
+
+            if (hor != 0 || ver != 0)
+            {
+                float angle = Quaternion.Angle(transform.rotation, Quaternion.LookRotation(dir));
+
+                if (angle != 0)
+                {
+                    //rb.rotation = Quaternion.Slerp(transform.rotation, Quaternion.LookRotation(dir), turn_speed * Time.deltaTime);
+                    transform.rotation = Quaternion.LookRotation(dir);
+                }
+            }
+
+            Vector3 ray_start = new Vector3(transform.position.x, 1, transform.position.z);
+            Debug.DrawRay(ray_start, dir, Color.green);
+        }
+        // Force player to look in direction of camera
+        else
+        {
+            /*
+            Vector3 fwd = cam.forward;
+            fwd.y = 0;
+
+            if (fwd.sqrMagnitude != 0.0f)
+            {
+                //fwd.Normalize();
+                rb.rotation = Quaternion.Slerp(transform.rotation, Quaternion.LookRotation(fwd), turn_speed);
+            }
+            */
+
+            //rb.rotation = Quaternion.Slerp(transform.rotation, Quaternion.LookRotation(cam.forward), turn_speed * Time.deltaTime);
+            //rb.rotation = Quaternion.Euler(0, cam.eulerAngles.y, 0);
+            transform.rotation = Quaternion.Euler(0, cam.eulerAngles.y, 0);
+        }
         #endregion
     }
 
@@ -157,35 +212,7 @@ public class PlayerController : MonoBehaviour
 
         #endregion
 
-        #region Rotation
 
-
-        if (!isStrafe)
-        {
-            dir_pos = transform.position + (right * hor) + (forward * ver);
-
-            Vector3 dir = dir_pos - transform.position;
-            dir.y = 0;
-
-            if (hor != 0 || ver != 0)
-            {
-                float angle = Quaternion.Angle(transform.rotation, Quaternion.LookRotation(dir));
-
-                if (angle != 0)
-                {
-                    rb.rotation = Quaternion.Slerp(transform.rotation, Quaternion.LookRotation(dir), turn_speed * Time.deltaTime);
-                }
-            }
-
-            Vector3 ray_start = new Vector3(transform.position.x, 1, transform.position.z);
-            Debug.DrawRay(ray_start, dir, Color.green);
-        }
-        // Force player to look in direction of camera
-        else
-        {
-            rb.rotation = Quaternion.Slerp(transform.rotation, Quaternion.LookRotation(cam.forward), turn_speed * Time.deltaTime);
-        }
-        #endregion
     }
 
 

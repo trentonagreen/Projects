@@ -238,7 +238,8 @@ MonoBehaviour:
   InputMagn: 0
   onSlope: 0
   slope_force: 2.5
-  slope_ray_leng: 10
+  slope_ray_leng: 5
+  isStrafe: 0
 --- !u!136 &104783780
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -573,6 +574,11 @@ PrefabInstance:
       propertyPath: m_Controller
       value: 
       objectReference: {fileID: 9100000, guid: 58e6d29894090824aa8e555bda1915bc, type: 2}
+    - target: {fileID: -6057140222963153312, guid: a0d832f3ce3c7e042b91b8eaf0fa441e,
+        type: 3}
+      propertyPath: m_ApplyRootMotion
+      value: 1
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: a0d832f3ce3c7e042b91b8eaf0fa441e, type: 3}
 --- !u!95 &286675168 stripped
@@ -1437,7 +1443,7 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1418556997}
-  m_LocalRotation: {x: 0.046224914, y: -0.0000000021484983, z: 9.940506e-11, w: 0.9989311}
+  m_LocalRotation: {x: 0.046224914, y: 0.0000000021484994, z: -9.943583e-11, w: 0.9989311}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:

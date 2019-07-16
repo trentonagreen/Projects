@@ -166,24 +166,23 @@ public class PlayerController : MonoBehaviour
         anim.SetFloat("InputX", hor, 0.0f, Time.deltaTime * 2f);
         anim.SetFloat("InputZ", ver, 0.0f, Time.deltaTime * 2f);
 
+        #region Idle/Walk/Run anim
         InputMagn = new Vector2(hor, ver).sqrMagnitude;
+        anim.SetFloat("InputMagnitude", InputMagn, 0.0f, Time.deltaTime);
+        #endregion Idle/Walk/Run anim
 
-        //if(anim_speed > allow_rotation)
-        //{
-            anim.SetFloat("InputMagnitude", InputMagn, 0.0f, Time.deltaTime);
-        //}
-        //else
-        //{
-            //anim.SetFloat("InputMagnitude", anim_speed, 0.0f, Time.deltaTime);
-        //}
-
-        if(!isStrafe)
+        if (!isStrafe)
         {
             anim.SetBool("isStrafe", false);
         }
         else
         {
             anim.SetBool("isStrafe", true);
+        }
+
+        if (isGrounded)
+        {
+            anim.SetBool("isGrounded", true);
         }
         #endregion
         
@@ -255,7 +254,7 @@ public class PlayerController : MonoBehaviour
     {
         if(isGrounded == false && collision.collider.tag == "Ground")
         {
-            anim.SetBool("isGrounded", true);
+            //anim.SetBool("isGrounded", true);
             isGrounded = true;
         }
     }

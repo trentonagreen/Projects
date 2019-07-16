@@ -27,10 +27,20 @@ public class PlayerController : MonoBehaviour
     [SerializeField]
     private float speed;
 
+    [Header("Jump Settings")]
+    public bool jumpEnable;
+    public bool isGrounded;
+    public float jump_force;
+    public ForceMode jump_force_type;
+
+    [Header("Crouch Settings")]
+    public bool isCrouching;
+
     [Header("Hover Settings")]
+    public bool hoverEnable;
     public float hover_force;
     public float clamp_hover;
-    public ForceMode force_type;
+    public ForceMode hover_force_type;
 
     [Header("Rotate Settings")]
     public float turn_speed;
@@ -66,7 +76,7 @@ public class PlayerController : MonoBehaviour
         var hor = Input.GetAxis("Horizontal");
         var ver = Input.GetAxis("Vertical");
 
-        // Sprint
+        #region Sprint
         if (Input.GetButton("PS4_Circle"))
         {
             speed = run_speed;
@@ -79,19 +89,34 @@ public class PlayerController : MonoBehaviour
         {
             speed = walk_speed;
         }
+        #endregion Sprint
 
-        // Hover
-        if ((Input.GetButton("PS4_X")))
+        #region Hover
+        if ((Input.GetButton("PS4_X")) && hoverEnable == true)
         {
             rb.useGravity = false;
-            Hover(hover_force, force_type);
+            Hover(hover_force, hover_force_type);
+
+            anim.SetBool("isHover", true);
+            anim.SetBool("isGrounded", false);
+            isGrounded = false;
         }
         else
         {
             rb.useGravity = true;
-        }
 
-        // Strafe
+            anim.SetBool("isHover", false);
+        }
+        #endregion Hover
+
+        #region Jump
+        if ((Input.GetButton("PS4_X")) && isGrounded == true && jumpEnable == true)
+        {
+            Jump(jump_force, jump_force_type);
+        }
+        #endregion Jump
+
+        #region Strafe
         if (Input.GetButton("PS4_R1"))
         {
             isStrafe = true;
@@ -100,31 +125,8 @@ public class PlayerController : MonoBehaviour
         {
             isStrafe = false;
         }
-        #endregion
+        #endregion Strafe
 
-        #region Animations
-        anim.SetFloat("InputX", hor, 0.0f, Time.deltaTime * 2f);
-        anim.SetFloat("InputZ", ver, 0.0f, Time.deltaTime * 2f);
-
-        InputMagn = new Vector2(hor, ver).sqrMagnitude;
-
-        //if(anim_speed > allow_rotation)
-        //{
-            anim.SetFloat("InputMagnitude", InputMagn, 0.0f, Time.deltaTime);
-        //}
-        //else
-        //{
-            //anim.SetFloat("InputMagnitude", anim_speed, 0.0f, Time.deltaTime);
-        //}
-
-        if(!isStrafe)
-        {
-            anim.SetBool("isStrafe", false);
-        }
-        else
-        {
-            anim.SetBool("isStrafe", true);
-        }
         #endregion
 
         #region Rotation
@@ -156,22 +158,35 @@ public class PlayerController : MonoBehaviour
         // Force player to look in direction of camera
         else
         {
-            /*
-            Vector3 fwd = cam.forward;
-            fwd.y = 0;
-
-            if (fwd.sqrMagnitude != 0.0f)
-            {
-                //fwd.Normalize();
-                rb.rotation = Quaternion.Slerp(transform.rotation, Quaternion.LookRotation(fwd), turn_speed);
-            }
-            */
-
-            //rb.rotation = Quaternion.Slerp(transform.rotation, Quaternion.LookRotation(cam.forward), turn_speed * Time.deltaTime);
-            //rb.rotation = Quaternion.Euler(0, cam.eulerAngles.y, 0);
             transform.rotation = Quaternion.Euler(0, cam.eulerAngles.y, 0);
         }
         #endregion
+
+        #region Animations
+        anim.SetFloat("InputX", hor, 0.0f, Time.deltaTime * 2f);
+        anim.SetFloat("InputZ", ver, 0.0f, Time.deltaTime * 2f);
+
+        InputMagn = new Vector2(hor, ver).sqrMagnitude;
+
+        //if(anim_speed > allow_rotation)
+        //{
+            anim.SetFloat("InputMagnitude", InputMagn, 0.0f, Time.deltaTime);
+        //}
+        //else
+        //{
+            //anim.SetFloat("InputMagnitude", anim_speed, 0.0f, Time.deltaTime);
+        //}
+
+        if(!isStrafe)
+        {
+            anim.SetBool("isStrafe", false);
+        }
+        else
+        {
+            anim.SetBool("isStrafe", true);
+        }
+        #endregion
+        
     }
 
     private void FixedUpdate()
@@ -179,25 +194,7 @@ public class PlayerController : MonoBehaviour
         var hor = Input.GetAxis("Horizontal");
         var ver = Input.GetAxis("Vertical");
 
-        #region Slope Check
-        onSlope = OnSlope();
-
-        if(onSlope)
-        {
-            //rb.AddForce(Vector3.down * slope_force);
-            rb.velocity = Vector3.down * slope_force;
-        }
-        #endregion
-
-        #region Movement
-        
-
-        /*
-        Vector3 direction = new Vector3(hor, 0, ver);
-        direction = direction.normalized * speed * Time.deltaTime;
-
-        rb.MovePosition(transform.position + direction);
-        */
+        #region General Movement
 
         Vector3 forward = cam.forward;
         Vector3 right = cam.right;
@@ -206,12 +203,20 @@ public class PlayerController : MonoBehaviour
         right.y = 0f;
 
         Vector3 direction = hor * right + ver * forward;
-        //Vector3 norm_direction = direction.normalized * speed * Time.deltaTime;
         direction = direction * speed * Time.deltaTime;
         rb.MovePosition(transform.position + direction);
 
         #endregion
 
+        #region Slope Check
+        onSlope = OnSlope();
+
+        if (onSlope)
+        {
+            //rb.AddForce(Vector3.down * slope_force);
+            rb.velocity = Vector3.down * slope_force;
+        }
+        #endregion
 
     }
 
@@ -222,6 +227,13 @@ public class PlayerController : MonoBehaviour
 
         // Clamps a max velocity to hover up
         rb.velocity = new Vector3(rb.velocity.x, Mathf.Clamp(rb.velocity.y, 0, clamp_hover), rb.velocity.z);
+    }
+
+    void Jump(float jump_force, ForceMode type)
+    {
+        isGrounded = false;
+        rb.velocity = Vector3.zero;
+        rb.AddRelativeForce(transform.up * jump_force, type);
     }
 
     bool OnSlope()
@@ -239,4 +251,12 @@ public class PlayerController : MonoBehaviour
         return false;
     }
 
+    private void OnCollisionStay(Collision collision)
+    {
+        if(isGrounded == false && collision.collider.tag == "Ground")
+        {
+            anim.SetBool("isGrounded", true);
+            isGrounded = true;
+        }
+    }
 }

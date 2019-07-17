@@ -5,20 +5,25 @@ using UnityEngine;
 public class PlayerController : MonoBehaviour
 {
     /* TODO
-     *      - Add Strafing
      *      - Add Blink / Dash / Dodge
-     *      - Add Animations
-     *          - Float
-     *          
+     *      - crouch strafe animations
      *          
      *  FINISHED
      *      - Basic Animations
      *          - Idle
      *          - Walk
      *          - Run
+     *      - Hover Animations
      *      - Movement
      *      - Rotation
      *      - Camera
+     *      - Strafe Camera
+     *      - Strafe Rotation
+     *      - Strafe Animations
+     *      - Crouch
+     *      - Crouch Animations
+     *      - Fall Animation
+     *      - Slope Check
      */
 
     [Header("Speed Settings")]
@@ -29,12 +34,15 @@ public class PlayerController : MonoBehaviour
 
     [Header("Jump Settings")]
     public bool jumpEnable;
+    public bool hasJumped;
     public bool isGrounded;
     public float jump_force;
     public ForceMode jump_force_type;
 
     [Header("Crouch Settings")]
+    public bool crouchEnable;
     public bool isCrouching;
+    public float crouch_speed;
 
     [Header("Hover Settings")]
     public bool hoverEnable;
@@ -85,6 +93,10 @@ public class PlayerController : MonoBehaviour
         {
             speed = 0;
         }
+        else if(isCrouching)
+        {
+            speed = crouch_speed;
+        }
         else
         {
             speed = walk_speed;
@@ -113,6 +125,14 @@ public class PlayerController : MonoBehaviour
         if ((Input.GetButton("PS4_X")) && isGrounded == true && jumpEnable == true)
         {
             Jump(jump_force, jump_force_type);
+
+            anim.SetBool("hasJumped", true);
+            anim.SetBool("isGrounded", false);
+            isGrounded = false;
+        }
+        else
+        {
+            anim.SetBool("hasJumped", false);
         }
         #endregion Jump
 
@@ -126,6 +146,22 @@ public class PlayerController : MonoBehaviour
             isStrafe = false;
         }
         #endregion Strafe
+
+        #region Crouch
+
+        if (Input.GetButtonDown("PS4_L1") && crouchEnable)
+        {
+            isCrouching = true;
+            anim.SetBool("isCrouching", isCrouching);
+        }
+        if(Input.GetButtonUp("PS4_L1") && crouchEnable)
+        //else
+        {
+            isCrouching = false;
+            anim.SetBool("isCrouching", isCrouching);
+        }
+
+        #endregion Crouch
 
         #endregion
 
@@ -171,6 +207,7 @@ public class PlayerController : MonoBehaviour
         anim.SetFloat("InputMagnitude", InputMagn, 0.0f, Time.deltaTime);
         #endregion Idle/Walk/Run anim
 
+        #region Strafe anim
         if (!isStrafe)
         {
             anim.SetBool("isStrafe", false);
@@ -179,13 +216,34 @@ public class PlayerController : MonoBehaviour
         {
             anim.SetBool("isStrafe", true);
         }
+        #endregion Strafe anim
 
+        #region Jump and Falling anim
         if (isGrounded)
         {
             anim.SetBool("isGrounded", true);
+            anim.SetBool("hasJumped", false);
         }
+        if (rb.velocity.y < -0.1)
+        {
+            anim.SetBool("isGrounded", false);
+            isGrounded = false;
+        }
+        else if(onSlope && rb.velocity.y > -0.1)
+        {
+            anim.SetBool("onSlope", true);
+        }
+        else
+        {
+            anim.SetBool("onSlope", false);
+        }
+
+        Debug.Log(rb.velocity.y);
+        anim.SetFloat("JumpVelocity", rb.velocity.y);
+
+        #endregion Jump and Falling anim
         #endregion
-        
+
     }
 
     private void FixedUpdate()
@@ -219,7 +277,6 @@ public class PlayerController : MonoBehaviour
 
     }
 
-
     void Hover(float hover_force, ForceMode type)
     {
         rb.AddRelativeForce(transform.up * hover_force, type);
@@ -230,7 +287,6 @@ public class PlayerController : MonoBehaviour
 
     void Jump(float jump_force, ForceMode type)
     {
-        isGrounded = false;
         rb.velocity = Vector3.zero;
         rb.AddRelativeForce(transform.up * jump_force, type);
     }

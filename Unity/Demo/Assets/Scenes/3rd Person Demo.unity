@@ -249,6 +249,14 @@ MonoBehaviour:
   slope_force: 2.5
   slope_ray_leng: 5
   isStrafe: 0
+  ray_debugger: {fileID: 847411000}
+  dashEnable: 1
+  canDash: 1
+  dash_force: 200
+  dash_cooldown: 5
+  dash_timer: 0
+  dash_duration: 0.25
+  dash_force_type: 1
 --- !u!136 &104783780
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -256,10 +264,10 @@ CapsuleCollider:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 104783778}
-  m_Material: {fileID: 0}
+  m_Material: {fileID: 13400000, guid: a9c6ea27edf3f7f4891a7f48e9d9fc20, type: 2}
   m_IsTrigger: 0
   m_Enabled: 1
-  m_Radius: 0.5
+  m_Radius: 0.3
   m_Height: 2
   m_Direction: 1
   m_Center: {x: 0, y: 1, z: 0}
@@ -271,7 +279,7 @@ Rigidbody:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 104783778}
   serializedVersion: 2
-  m_Mass: 1
+  m_Mass: 10
   m_Drag: 0
   m_AngularDrag: 0.05
   m_UseGravity: 1
@@ -291,6 +299,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 286675169}
+  - {fileID: 847411000}
   m_Father: {fileID: 0}
   m_RootOrder: 6
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -1151,6 +1160,36 @@ MonoBehaviour:
   m_Damping: 2
   m_DampingWhenOccluded: 1
   m_OptimalTargetDistance: 0
+--- !u!1 &847410999
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 847411000}
+  m_Layer: 0
+  m_Name: Ray Debugger
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &847411000
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 847410999}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 1.671, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 104783782}
+  m_RootOrder: 1
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &889886861
 GameObject:
   m_ObjectHideFlags: 3
@@ -1435,7 +1474,7 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1418556997}
-  m_LocalRotation: {x: 0.046224896, y: -0.000000002148498, z: 9.9405026e-11, w: 0.9989311}
+  m_LocalRotation: {x: 0.046224896, y: 0.0000000021484996, z: -9.943578e-11, w: 0.9989311}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:

@@ -69,6 +69,19 @@ public class PlayerController : MonoBehaviour
     [SerializeField]
     private bool isStrafe;
 
+    [Header("Debug Settings")]
+    public Transform ray_debugger;
+    private Vector3 ray_start;
+
+    [Header("Dash Settings")]
+    public bool dashEnable;
+    public bool canDash;
+    public float dash_force;
+    public float dash_cooldown;
+    public float dash_timer;
+    public float dash_duration;
+    public ForceMode dash_force_type;
+    
     Rigidbody rb;
     Transform cam;
 
@@ -80,9 +93,10 @@ public class PlayerController : MonoBehaviour
 
     private void Update()
     {
-        #region Inputs
         var hor = Input.GetAxis("Horizontal");
         var ver = Input.GetAxis("Vertical");
+
+        #region Inputs
 
         #region Sprint
         if (Input.GetButton("PS4_Circle"))
@@ -103,6 +117,8 @@ public class PlayerController : MonoBehaviour
         }
         #endregion Sprint
 
+        #region SAVE hover and jump
+        /*
         #region Hover
         if ((Input.GetButton("PS4_X")) && hoverEnable == true)
         {
@@ -135,6 +151,8 @@ public class PlayerController : MonoBehaviour
             anim.SetBool("hasJumped", false);
         }
         #endregion Jump
+        */
+        #endregion SAVE hover and jump
 
         #region Strafe
         if (Input.GetButton("PS4_R1"))
@@ -187,9 +205,6 @@ public class PlayerController : MonoBehaviour
                     transform.rotation = Quaternion.LookRotation(dir);
                 }
             }
-
-            Vector3 ray_start = new Vector3(transform.position.x, 1, transform.position.z);
-            Debug.DrawRay(ray_start, dir, Color.green);
         }
         // Force player to look in direction of camera
         else
@@ -238,7 +253,6 @@ public class PlayerController : MonoBehaviour
             anim.SetBool("onSlope", false);
         }
 
-        Debug.Log(rb.velocity.y);
         anim.SetFloat("JumpVelocity", rb.velocity.y);
 
         #endregion Jump and Falling anim
@@ -263,6 +277,9 @@ public class PlayerController : MonoBehaviour
         direction = direction * speed * Time.deltaTime;
         rb.MovePosition(transform.position + direction);
 
+        //ray_start = new Vector3(ray_debugger.position.x, ray_debugger.position.y, ray_debugger.position.z);
+        //Debug.DrawRay(ray_start, direction * 10, Color.magenta);
+
         #endregion
 
         #region Slope Check
@@ -273,6 +290,62 @@ public class PlayerController : MonoBehaviour
             //rb.AddForce(Vector3.down * slope_force);
             rb.velocity = Vector3.down * slope_force;
         }
+        #endregion
+
+        #region Inputs Physics Based
+
+        #region Dash
+
+        dash_timer += Time.deltaTime;
+
+        if (dash_timer > dash_cooldown)
+        {
+            dash_timer = 0;
+            canDash = true;
+        }
+
+        if (Input.GetButtonDown("PS4_Square") && dashEnable && canDash == true)
+        {
+            Vector3 dash_dir = hor * right + ver * forward;
+
+            StartCoroutine(Dash(dash_dir, dash_force, dash_force_type));
+            canDash = false;
+        }
+        #endregion Dash
+
+        #region Hover
+        if ((Input.GetButton("PS4_X")) && hoverEnable == true)
+        {
+            rb.useGravity = false;
+            Hover(hover_force, hover_force_type);
+
+            anim.SetBool("isHover", true);
+            anim.SetBool("isGrounded", false);
+            isGrounded = false;
+        }
+        else
+        {
+            rb.useGravity = true;
+
+            anim.SetBool("isHover", false);
+        }
+        #endregion Hover
+
+        #region Jump
+        if ((Input.GetButton("PS4_X")) && isGrounded == true && jumpEnable == true)
+        {
+            Jump(jump_force, jump_force_type);
+
+            anim.SetBool("hasJumped", true);
+            anim.SetBool("isGrounded", false);
+            isGrounded = false;
+        }
+        else
+        {
+            anim.SetBool("hasJumped", false);
+        }
+        #endregion Jump
+
         #endregion
 
     }
@@ -304,6 +377,13 @@ public class PlayerController : MonoBehaviour
         }
 
         return false;
+    }
+
+    IEnumerator Dash(Vector3 dash_dir, float dash_force, ForceMode type)
+    {
+        rb.AddForce(dash_dir * dash_force, ForceMode.Impulse);
+        yield return new WaitForSeconds(dash_duration);
+        rb.velocity = Vector3.zero;
     }
 
     private void OnCollisionStay(Collision collision)

@@ -5,8 +5,9 @@ using UnityEngine;
 public class PlayerController : MonoBehaviour
 {
     /* TODO
-     *      - Add Blink / Dash / Dodge
+     *      - add dash animations
      *      - crouch strafe animations
+     *      - FIX spinning when dashing into slope
      *          
      *  FINISHED
      *      - Basic Animations
@@ -24,6 +25,7 @@ public class PlayerController : MonoBehaviour
      *      - Crouch Animations
      *      - Fall Animation
      *      - Slope Check
+     *      - Dash Mechanic 
      */
 
     [Header("Speed Settings")]

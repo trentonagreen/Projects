@@ -188,7 +188,7 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 33064147}
-  m_LocalRotation: {x: 0.06433935, y: 0.000000004292685, z: -2.7676753e-10, w: 0.99792814}
+  m_LocalRotation: {x: 0.06433935, y: -0.0000000042926818, z: 2.7675617e-10, w: 0.99792814}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
@@ -205,9 +205,9 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 104783782}
+  - component: {fileID: 104783779}
   - component: {fileID: 104783781}
   - component: {fileID: 104783780}
-  - component: {fileID: 104783779}
   m_Layer: 0
   m_Name: PlayerController
   m_TagString: Player
@@ -224,7 +224,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 104783778}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d64889df4b1ddb445b3e49a40605f87d, type: 3}
+  m_Script: {fileID: 11500000, guid: 6729f90671010194ba7afb3cebeb4d3b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   walk_speed: 5
@@ -239,24 +239,27 @@ MonoBehaviour:
   isCrouching: 0
   crouch_speed: 3
   hoverEnable: 1
-  hover_force: 5
-  clamp_hover: 1
+  hover_force: 50
+  clamp_hover: 5
   hover_force_type: 0
-  turn_speed: 20
+  turn_speed: 0
   anim: {fileID: 286675168}
   InputMagn: 0
   onSlope: 0
-  slope_force: 2.5
+  slope_force: 5
   slope_ray_leng: 5
   isStrafe: 0
   ray_debugger: {fileID: 847411000}
   dashEnable: 1
-  canDash: 1
+  canDash: 0
   dash_force: 200
-  dash_cooldown: 5
+  dash_cooldown: 2
   dash_timer: 0
   dash_duration: 0.25
-  dash_force_type: 1
+  dash_start: 0
+  dash_force_type: 0
+  surface: {fileID: 1393332197}
+  joint: {fileID: 408099676}
 --- !u!136 &104783780
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -380,7 +383,7 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 241650104}
-  m_LocalRotation: {x: 0.06433935, y: 0.000000008585366, z: -5.535237e-10, w: 0.9979281}
+  m_LocalRotation: {x: 0.06433935, y: -0.000000008585366, z: 5.535237e-10, w: 0.9979281}
   m_LocalPosition: {x: 0, y: 4.7799997, z: -6}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
@@ -597,6 +600,16 @@ PrefabInstance:
       propertyPath: m_ApplyRootMotion
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 2135624897131870642, guid: a0d832f3ce3c7e042b91b8eaf0fa441e,
+        type: 3}
+      propertyPath: m_Enabled
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1127413562660826936, guid: a0d832f3ce3c7e042b91b8eaf0fa441e,
+        type: 3}
+      propertyPath: m_Enabled
+      value: 1
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: a0d832f3ce3c7e042b91b8eaf0fa441e, type: 3}
 --- !u!95 &286675168 stripped
@@ -702,6 +715,12 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 5
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!137 &408099676 stripped
+SkinnedMeshRenderer:
+  m_CorrespondingSourceObject: {fileID: 1127413562660826936, guid: a0d832f3ce3c7e042b91b8eaf0fa441e,
+    type: 3}
+  m_PrefabInstance: {fileID: 286675163}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &428003902
 GameObject:
   m_ObjectHideFlags: 3
@@ -1406,6 +1425,12 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!137 &1393332197 stripped
+SkinnedMeshRenderer:
+  m_CorrespondingSourceObject: {fileID: 2135624897131870642, guid: a0d832f3ce3c7e042b91b8eaf0fa441e,
+    type: 3}
+  m_PrefabInstance: {fileID: 286675163}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &1418556997
 GameObject:
   m_ObjectHideFlags: 3
@@ -1474,7 +1499,7 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1418556997}
-  m_LocalRotation: {x: 0.046224896, y: 0.0000000021484996, z: -9.943578e-11, w: 0.9989311}
+  m_LocalRotation: {x: 0.046224896, y: -0.000000002148498, z: 9.9405026e-11, w: 0.9989311}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:

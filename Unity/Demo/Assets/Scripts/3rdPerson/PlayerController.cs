@@ -82,7 +82,12 @@ public class PlayerController : MonoBehaviour
     public float dash_cooldown;
     public float dash_timer;
     public float dash_duration;
+    public float dash_start;
     public ForceMode dash_force_type;
+
+    [Header("Mesh Settings")]
+    public SkinnedMeshRenderer surface;
+    public SkinnedMeshRenderer joint;
     
     Rigidbody rb;
     Transform cam;
@@ -185,36 +190,6 @@ public class PlayerController : MonoBehaviour
 
         #endregion
 
-        #region Rotation
-
-        Vector3 forward = cam.forward;
-        Vector3 right = cam.right;
-
-        if (!isStrafe)
-        {
-            dir_pos = transform.position + (right * hor) + (forward * ver);
-
-            Vector3 dir = dir_pos - transform.position;
-            dir.y = 0;
-
-            if (hor != 0 || ver != 0)
-            {
-                float angle = Quaternion.Angle(transform.rotation, Quaternion.LookRotation(dir));
-
-                if (angle != 0)
-                {
-                    //rb.rotation = Quaternion.Slerp(transform.rotation, Quaternion.LookRotation(dir), turn_speed * Time.deltaTime);
-                    transform.rotation = Quaternion.LookRotation(dir);
-                }
-            }
-        }
-        // Force player to look in direction of camera
-        else
-        {
-            transform.rotation = Quaternion.Euler(0, cam.eulerAngles.y, 0);
-        }
-        #endregion
-
         #region Animations
         anim.SetFloat("InputX", hor, 0.0f, Time.deltaTime * 2f);
         anim.SetFloat("InputZ", ver, 0.0f, Time.deltaTime * 2f);
@@ -284,20 +259,55 @@ public class PlayerController : MonoBehaviour
 
         #endregion
 
+        #region Rotation
+
+        //Vector3 forward = cam.forward;
+        //Vector3 right = cam.right;
+
+        if (!isStrafe)
+        {
+            dir_pos = transform.position + (right * hor) + (forward * ver);
+
+            Vector3 dir = dir_pos - transform.position;
+            dir.y = 0;
+
+            if (hor != 0 || ver != 0)
+            {
+                float angle = Quaternion.Angle(transform.rotation, Quaternion.LookRotation(dir));
+
+                if (angle != 0)
+                {
+                    //rb.rotation = Quaternion.Slerp(transform.rotation, Quaternion.LookRotation(dir), turn_speed * Time.deltaTime);
+
+                    //transform.rotation = Quaternion.LookRotation(dir);
+                    rb.MoveRotation(Quaternion.LookRotation(dir));
+                }
+            }
+        }
+        // Force player to look in direction of camera
+        else
+        {
+            //transform.rotation = Quaternion.Euler(0, cam.eulerAngles.y, 0);
+            rb.MoveRotation(Quaternion.Euler(0, cam.eulerAngles.y, 0));
+        }
+        #endregion
+
         #region Slope Check
         onSlope = OnSlope();
 
         if (onSlope)
         {
             //rb.AddForce(Vector3.down * slope_force);
-            rb.velocity = Vector3.down * slope_force;
+            //rb.velocity = Vector3.down * slope_force;
+
+            rb.AddForce(-transform.up * slope_force);
         }
         #endregion
 
         #region Inputs Physics Based
 
         #region Dash
-
+        
         dash_timer += Time.deltaTime;
 
         if (dash_timer > dash_cooldown)
@@ -310,7 +320,8 @@ public class PlayerController : MonoBehaviour
         {
             Vector3 dash_dir = hor * right + ver * forward;
 
-            StartCoroutine(Dash(dash_dir, dash_force, dash_force_type));
+            StartCoroutine(Dash(dash_dir, dash_force, dash_force_type));           
+
             canDash = false;
         }
         #endregion Dash
@@ -366,26 +377,35 @@ public class PlayerController : MonoBehaviour
         rb.AddRelativeForce(transform.up * jump_force, type);
     }
 
+    IEnumerator Dash(Vector3 dash_dir, float dash_force, ForceMode type)
+    {
+        dash_dir = dash_dir.normalized;
+
+        surface.enabled = false;
+        joint.enabled = false;
+
+        rb.AddForce(dash_dir * dash_force, ForceMode.Impulse);
+        yield return new WaitForSeconds(dash_duration);
+
+        surface.enabled = true;
+        joint.enabled = true;
+
+        rb.velocity = Vector3.zero;
+    }
+
     bool OnSlope()
     {
         RaycastHit hit;
 
-        if(Physics.Raycast(transform.position, Vector3.down, out hit, slope_ray_leng))
+        if (Physics.Raycast(transform.position, Vector3.down, out hit, slope_ray_leng))
         {
-            if(hit.normal != Vector3.up)
+            if (hit.normal != Vector3.up)
             {
                 return true;
             }
         }
 
         return false;
-    }
-
-    IEnumerator Dash(Vector3 dash_dir, float dash_force, ForceMode type)
-    {
-        rb.AddForce(dash_dir * dash_force, ForceMode.Impulse);
-        yield return new WaitForSeconds(dash_duration);
-        rb.velocity = Vector3.zero;
     }
 
     private void OnCollisionStay(Collision collision)
@@ -396,4 +416,16 @@ public class PlayerController : MonoBehaviour
             isGrounded = true;
         }
     }
+
+    private void OnCollisionEnter(Collision collision)
+    {
+        // stops rigidbody from spinning after collision
+        if(collision.collider.tag == "Ground")
+        {
+            rb.angularVelocity = Vector3.zero;
+            rb.velocity = Vector3.zero;
+        }
+            
+    }
+
 }

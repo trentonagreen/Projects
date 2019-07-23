@@ -5,9 +5,8 @@ using UnityEngine;
 public class PlayerController : MonoBehaviour
 {
     /* TODO
-     *      - add dash animations
      *      - crouch strafe animations
-     *      - FIX spinning when dashing into slope
+     *      - Better Slope Interaction
      *          
      *  FINISHED
      *      - Basic Animations
@@ -24,8 +23,9 @@ public class PlayerController : MonoBehaviour
      *      - Crouch
      *      - Crouch Animations
      *      - Fall Animation
-     *      - Slope Check
      *      - Dash Mechanic 
+     *      - Dash Animations
+     *      - FIXED spinning after collision
      */
 
     [Header("Speed Settings")]
@@ -84,6 +84,7 @@ public class PlayerController : MonoBehaviour
     public float dash_duration;
     public float dash_start;
     public ForceMode dash_force_type;
+    public GameObject dash_effect;
 
     [Header("Mesh Settings")]
     public SkinnedMeshRenderer surface;
@@ -96,10 +97,13 @@ public class PlayerController : MonoBehaviour
     {
         rb = GetComponent<Rigidbody>();
         cam = Camera.main.transform;
+
+        dash_effect.SetActive(false);
     }
 
     private void Update()
     {
+
         var hor = Input.GetAxis("Horizontal");
         var ver = Input.GetAxis("Vertical");
 
@@ -319,10 +323,9 @@ public class PlayerController : MonoBehaviour
         if (Input.GetButtonDown("PS4_Square") && dashEnable && canDash == true)
         {
             Vector3 dash_dir = hor * right + ver * forward;
-
-            StartCoroutine(Dash(dash_dir, dash_force, dash_force_type));           
-
+            StartCoroutine(Dash(dash_dir, dash_force, dash_force_type));
             canDash = false;
+            dash_timer = 0;
         }
         #endregion Dash
 
@@ -384,6 +387,8 @@ public class PlayerController : MonoBehaviour
         surface.enabled = false;
         joint.enabled = false;
 
+        dash_effect.SetActive(true);
+
         rb.AddForce(dash_dir * dash_force, ForceMode.Impulse);
         yield return new WaitForSeconds(dash_duration);
 
@@ -391,6 +396,8 @@ public class PlayerController : MonoBehaviour
         joint.enabled = true;
 
         rb.velocity = Vector3.zero;
+
+        dash_effect.SetActive(false);
     }
 
     bool OnSlope()

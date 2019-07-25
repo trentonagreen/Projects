@@ -103,6 +103,7 @@ public class PlayerController : MonoBehaviour
 
     private void Update()
     {
+        Debug.Log(rb.velocity.y);
 
         var hor = Input.GetAxis("Horizontal");
         var ver = Input.GetAxis("Vertical");
@@ -214,18 +215,20 @@ public class PlayerController : MonoBehaviour
         }
         #endregion Strafe anim
 
-        #region Jump and Falling anim
-        if (isGrounded)
-        {
-            anim.SetBool("isGrounded", true);
-            anim.SetBool("hasJumped", false);
-        }
-        if (rb.velocity.y < -0.1)
+        #region Falling anim
+        //if (rb.velocity.y > 0.1 || rb.velocity.y < -1f)
+        //{
+        //    anim.SetBool("isGrounded", false);
+        //    isGrounded = false;
+        //}
+
+        if(rb.velocity.y < -3f)
         {
             anim.SetBool("isGrounded", false);
             isGrounded = false;
         }
-        else if(onSlope && rb.velocity.y > -0.1)
+
+        if (onSlope) //&& rb.velocity.y > -0.1)
         {
             anim.SetBool("onSlope", true);
         }
@@ -251,8 +254,8 @@ public class PlayerController : MonoBehaviour
         Vector3 forward = cam.forward;
         Vector3 right = cam.right;
 
-        forward.y = 0f;
-        right.y = 0f;
+        //forward.y = 0f;
+        //right.y = 0f;
 
         Vector3 direction = hor * right + ver * forward;
         direction = direction * speed * Time.deltaTime;
@@ -299,6 +302,7 @@ public class PlayerController : MonoBehaviour
         #region Slope Check
         onSlope = OnSlope();
 
+        /*
         if (onSlope)
         {
             //rb.AddForce(Vector3.down * slope_force);
@@ -306,6 +310,7 @@ public class PlayerController : MonoBehaviour
 
             rb.AddForce(-transform.up * slope_force);
         }
+        */
         #endregion
 
         #region Inputs Physics Based
@@ -358,6 +363,12 @@ public class PlayerController : MonoBehaviour
         }
         else
         {
+            anim.SetBool("hasJumped", false);
+        }
+
+        if(isGrounded)
+        {
+            anim.SetBool("isGrounded", true);
             anim.SetBool("hasJumped", false);
         }
         #endregion Jump

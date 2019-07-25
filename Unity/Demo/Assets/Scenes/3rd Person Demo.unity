@@ -233,7 +233,7 @@ MonoBehaviour:
   jumpEnable: 0
   hasJumped: 0
   isGrounded: 0
-  jump_force: 5
+  jump_force: 75
   jump_force_type: 1
   crouchEnable: 1
   isCrouching: 0
@@ -246,7 +246,7 @@ MonoBehaviour:
   anim: {fileID: 286675168}
   InputMagn: 0
   onSlope: 0
-  slope_force: 5
+  slope_force: 10
   slope_ray_leng: 5
   isStrafe: 0
   ray_debugger: {fileID: 847411000}
@@ -255,11 +255,10 @@ MonoBehaviour:
   dash_force: 200
   dash_cooldown: 2
   dash_timer: 0
-  dash_duration: 0.25
+  dash_duration: 0.33
   dash_start: 0
   dash_force_type: 1
-  dash_effect: {fileID: 8579038254196403080, guid: 941993bad2bf1484987c5656188d4807,
-    type: 3}
+  dash_effect: {fileID: 863014831}
   surface: {fileID: 1393332197}
   joint: {fileID: 408099676}
 --- !u!136 &104783780
@@ -305,6 +304,7 @@ Transform:
   m_Children:
   - {fileID: 286675169}
   - {fileID: 847411000}
+  - {fileID: 863014834}
   m_Father: {fileID: 0}
   m_RootOrder: 6
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -5956,12 +5956,12 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 863014831}
-  m_LocalRotation: {x: -0.7071068, y: 0, z: 0, w: 0.7071068}
-  m_LocalPosition: {x: -5.01, y: 0.61, z: 0.12}
+  m_LocalRotation: {x: -0.7071068, y: -0, z: -0, w: 0.7071068}
+  m_LocalPosition: {x: 0, y: 1, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
-  m_Father: {fileID: 0}
-  m_RootOrder: 8
+  m_Father: {fileID: 104783782}
+  m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: -90, y: 0, z: 0}
 --- !u!1 &889886861
 GameObject:

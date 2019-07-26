@@ -222,7 +222,7 @@ public class PlayerController : MonoBehaviour
         //    isGrounded = false;
         //}
 
-        if(rb.velocity.y < -3f)
+        if(rb.velocity.y < -10f)
         {
             anim.SetBool("isGrounded", false);
             isGrounded = false;

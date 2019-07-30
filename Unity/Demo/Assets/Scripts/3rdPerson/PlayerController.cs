@@ -242,6 +242,10 @@ public class PlayerController : MonoBehaviour
         #endregion Jump and Falling anim
         #endregion
 
+        if(Input.GetButton("PS4_R1"))
+        {
+            anim.SetInteger("Attack", 1);
+        }
     }
 
     private void FixedUpdate()

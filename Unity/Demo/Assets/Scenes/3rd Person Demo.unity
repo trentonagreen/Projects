@@ -251,8 +251,9 @@ MonoBehaviour:
   slope_ray_leng: 5
   isStrafe: 0
   ray_debugger: {fileID: 847411000}
-  dashEnable: 1
+  dashEnable: 0
   canDash: 1
+  isDashing: 0
   dash_force: 200
   dash_cooldown: 2
   dash_timer: 0
@@ -263,7 +264,10 @@ MonoBehaviour:
   surface: {fileID: 1393332197}
   joint: {fileID: 408099676}
   isAttacking: 0
-  attack: {fileID: -203655887218126122, guid: b55cf51eb01d17c48b2df0fa4d25f6e8, type: 3}
+  attack: {fileID: -203655887218126122, guid: 427294978313e5749bd8a76d854eaa4a, type: 3}
+  rollEnable: 1
+  isRolling: 0
+  roll: {fileID: -203655887218126122, guid: 11f217c5d602a5a4d9d99f2aec64ae4a, type: 3}
 --- !u!136 &104783780
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -6280,7 +6284,7 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1418556997}
-  m_LocalRotation: {x: 0.046224926, y: 7.081337e-16, z: -1.530293e-14, w: 0.99893105}
+  m_LocalRotation: {x: 0.046224926, y: 7.081338e-16, z: -1.530293e-14, w: 0.99893105}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:

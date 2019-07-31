@@ -6,7 +6,9 @@ public class PlayerController : MonoBehaviour
 {
     /* TODO
      *      - crouch strafe animations
-     *      - Better Slope Interaction
+     *      - Better Jump
+     *      - Sequential Attacks
+     *      - Attack/Roll from strafe
      *          
      *  FINISHED
      *      - Basic Animations
@@ -26,6 +28,9 @@ public class PlayerController : MonoBehaviour
      *      - Dash Mechanic 
      *      - Dash Animations
      *      - FIXED spinning after collision
+     *      - Improved Slope Interaction
+     *      - Added 1 Attack
+     *      - Added Rolling
      */
 
     [Header("Speed Settings")]
@@ -78,6 +83,7 @@ public class PlayerController : MonoBehaviour
     [Header("Dash Settings")]
     public bool dashEnable;
     public bool canDash;
+    public bool isDashing;
     public float dash_force;
     public float dash_cooldown;
     public float dash_timer;
@@ -93,6 +99,11 @@ public class PlayerController : MonoBehaviour
     [Header("Attack Anims")]
     public bool isAttacking;
     public AnimationClip attack;
+
+    [Header("Rolling Anims")]
+    public bool rollEnable;
+    public bool isRolling;
+    public AnimationClip roll;
     
     Rigidbody rb;
     Transform cam;
@@ -244,8 +255,8 @@ public class PlayerController : MonoBehaviour
         anim.SetFloat("JumpVelocity", rb.velocity.y);
 
         #endregion Jump and Falling anim
-        #endregion
 
+        #region Attack anims
         if (Input.GetButton("PS4_Triangle"))
         {
             isAttacking = true;
@@ -253,6 +264,21 @@ public class PlayerController : MonoBehaviour
             anim.SetBool("isAttacking", true);
             StartCoroutine(AttackAnim());
         }
+        #endregion Attack anims
+
+        #region Rolling anims
+        if(rollEnable && Input.GetButton("PS4_Square"))
+        {
+            isRolling = true;
+            anim.applyRootMotion = true;
+            anim.SetBool("isRolling", true);
+            StartCoroutine(RollingAnim());
+        }
+        #endregion Rolling anims
+
+        #endregion
+
+
     }
 
     private void FixedUpdate()
@@ -265,11 +291,22 @@ public class PlayerController : MonoBehaviour
         Vector3 forward = cam.forward;
         Vector3 right = cam.right;
 
+        if(!onSlope && !isDashing)
+        {
+            forward.y = 0f;
+            right.y = 0f;
+        }
         //forward.y = 0f;
         //right.y = 0f;
 
         Vector3 direction = hor * right + ver * forward;
         direction = direction * speed * Time.deltaTime;
+
+        if(isAttacking || isRolling)
+        {
+            direction = Vector3.zero;
+        }
+
         rb.MovePosition(transform.position + direction);
 
         //ray_start = new Vector3(ray_debugger.position.x, ray_debugger.position.y, ray_debugger.position.z);
@@ -293,7 +330,7 @@ public class PlayerController : MonoBehaviour
             {
                 float angle = Quaternion.Angle(transform.rotation, Quaternion.LookRotation(dir));
 
-                if (angle != 0)
+                if (angle != 0 && !isAttacking && !isRolling)
                 {
                     //rb.rotation = Quaternion.Slerp(transform.rotation, Quaternion.LookRotation(dir), turn_speed * Time.deltaTime);
 
@@ -338,6 +375,10 @@ public class PlayerController : MonoBehaviour
 
         if (Input.GetButtonDown("PS4_Square") && dashEnable && canDash == true)
         {
+            forward = cam.forward;
+            right = cam.right;
+
+            isDashing = true;
             Vector3 dash_dir = hor * right + ver * forward;
             StartCoroutine(Dash(dash_dir, dash_force, dash_force_type));
             canDash = false;
@@ -388,6 +429,8 @@ public class PlayerController : MonoBehaviour
 
     }
 
+
+    #region Hover | Jump | Slope
     void Hover(float hover_force, ForceMode type)
     {
         rb.AddRelativeForce(transform.up * hover_force, type);
@@ -416,7 +459,9 @@ public class PlayerController : MonoBehaviour
 
         return false;
     }
+    #endregion
 
+    #region IEnumerators
     IEnumerator Dash(Vector3 dash_dir, float dash_force, ForceMode type)
     {
         dash_dir = dash_dir.normalized;
@@ -428,6 +473,8 @@ public class PlayerController : MonoBehaviour
 
         rb.AddForce(dash_dir * dash_force, ForceMode.Impulse);
         yield return new WaitForSeconds(dash_duration);
+
+        isDashing = false;
 
         surface.enabled = true;
         joint.enabled = true;
@@ -446,6 +493,17 @@ public class PlayerController : MonoBehaviour
         anim.SetBool("isAttacking", false);
     }
 
+    private IEnumerator RollingAnim()
+    {
+        yield return new WaitForSeconds(roll.length);
+
+        isRolling = false;
+        anim.applyRootMotion = false;
+        anim.SetBool("isRolling", false);
+    }
+    #endregion
+
+    #region Collision Functions
     private void OnCollisionStay(Collision collision)
     {
         if(isGrounded == false && collision.collider.tag == "Ground")
@@ -465,5 +523,5 @@ public class PlayerController : MonoBehaviour
         }
             
     }
-
+    #endregion
 }

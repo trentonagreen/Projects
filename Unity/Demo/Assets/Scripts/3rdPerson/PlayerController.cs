@@ -89,6 +89,10 @@ public class PlayerController : MonoBehaviour
     [Header("Mesh Settings")]
     public SkinnedMeshRenderer surface;
     public SkinnedMeshRenderer joint;
+
+    [Header("Attack Anims")]
+    public bool isAttacking;
+    public AnimationClip attack;
     
     Rigidbody rb;
     Transform cam;
@@ -242,9 +246,12 @@ public class PlayerController : MonoBehaviour
         #endregion Jump and Falling anim
         #endregion
 
-        if(Input.GetButton("PS4_R1"))
+        if (Input.GetButton("PS4_Triangle"))
         {
-            anim.SetInteger("Attack", 1);
+            isAttacking = true;
+            anim.applyRootMotion = true;
+            anim.SetBool("isAttacking", true);
+            StartCoroutine(AttackAnim());
         }
     }
 
@@ -395,6 +402,21 @@ public class PlayerController : MonoBehaviour
         rb.AddRelativeForce(transform.up * jump_force, type);
     }
 
+    bool OnSlope()
+    {
+        RaycastHit hit;
+
+        if (Physics.Raycast(transform.position, Vector3.down, out hit, slope_ray_leng))
+        {
+            if (hit.normal != Vector3.up)
+            {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
     IEnumerator Dash(Vector3 dash_dir, float dash_force, ForceMode type)
     {
         dash_dir = dash_dir.normalized;
@@ -415,19 +437,13 @@ public class PlayerController : MonoBehaviour
         dash_effect.SetActive(false);
     }
 
-    bool OnSlope()
+    private IEnumerator AttackAnim()
     {
-        RaycastHit hit;
+        yield return new WaitForSeconds(attack.length);
 
-        if (Physics.Raycast(transform.position, Vector3.down, out hit, slope_ray_leng))
-        {
-            if (hit.normal != Vector3.up)
-            {
-                return true;
-            }
-        }
-
-        return false;
+        isAttacking = false;
+        anim.applyRootMotion = false;
+        anim.SetBool("isAttacking", false);
     }
 
     private void OnCollisionStay(Collision collision)

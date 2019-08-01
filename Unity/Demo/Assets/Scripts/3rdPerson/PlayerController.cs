@@ -5,10 +5,11 @@ using UnityEngine;
 public class PlayerController : MonoBehaviour
 {
     /* TODO
-     *      - crouch strafe animations
-     *      - Better Jump
-     *      - Sequential Attacks
+     *      - Better Jump root motion
+     *      - Combo Attacks
      *      - Attack/Roll from strafe
+     *      
+     *      - SEPERATE SCRIPT TO SMALLER ONES
      *          
      *  FINISHED
      *      - Basic Animations
@@ -31,6 +32,8 @@ public class PlayerController : MonoBehaviour
      *      - Improved Slope Interaction
      *      - Added 1 Attack
      *      - Added Rolling
+     *      - Jump Root Motion
+     *      - Crouch Strafe Anims
      */
 
     [Header("Speed Settings")]
@@ -104,6 +107,11 @@ public class PlayerController : MonoBehaviour
     public bool rollEnable;
     public bool isRolling;
     public AnimationClip roll;
+
+    [Header("Jumping Root Anim")]
+    public bool jumpRootEnable;
+    public bool isJumping;
+    public AnimationClip jumpClip;
     
     Rigidbody rb;
     Transform cam;
@@ -267,7 +275,7 @@ public class PlayerController : MonoBehaviour
         #endregion Attack anims
 
         #region Rolling anims
-        if(rollEnable && Input.GetButton("PS4_Square"))
+        if(rollEnable && Input.GetButton("PS4_Square") && !isCrouching && !isStrafe && !isAttacking)
         {
             isRolling = true;
             anim.applyRootMotion = true;
@@ -275,6 +283,16 @@ public class PlayerController : MonoBehaviour
             StartCoroutine(RollingAnim());
         }
         #endregion Rolling anims
+
+        #region Jump Anim
+        if(jumpRootEnable && Input.GetButton("PS4_X"))
+        {
+            isJumping = true;
+            anim.applyRootMotion = true;
+            anim.SetBool("isJumpingRoot", true);
+            StartCoroutine(JumpingAnim());
+        }
+        #endregion Jump Anim
 
         #endregion
 
@@ -500,6 +518,15 @@ public class PlayerController : MonoBehaviour
         isRolling = false;
         anim.applyRootMotion = false;
         anim.SetBool("isRolling", false);
+    }
+
+    private IEnumerator JumpingAnim()
+    {
+        yield return new WaitForSeconds(jumpClip.length);
+
+        isJumping = false;
+        anim.applyRootMotion = false;
+        anim.SetBool("isJumpingRoot", false);
     }
     #endregion
 

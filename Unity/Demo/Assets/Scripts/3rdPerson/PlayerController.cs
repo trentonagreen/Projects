@@ -100,6 +100,7 @@ public class PlayerController : MonoBehaviour
     public SkinnedMeshRenderer joint;
 
     [Header("Attack Anims")]
+    public bool attackEnable;
     public bool isAttacking;
     public AnimationClip attack;
 
@@ -112,6 +113,15 @@ public class PlayerController : MonoBehaviour
     public bool jumpRootEnable;
     public bool isJumping;
     public AnimationClip jumpClip;
+
+    //[Header("Debug Settings")]
+    //public int r1Count;
+
+    [Header("Attack Combo Settings")]
+    public bool isComboAttacking;
+    public bool attackComboEnable;
+    public int attackCount;
+    public bool canAttack;
     
     Rigidbody rb;
     Transform cam;
@@ -126,7 +136,8 @@ public class PlayerController : MonoBehaviour
 
     private void Update()
     {
-        Debug.Log(rb.velocity.y);
+
+        //Debug.Log(rb.velocity.y);
 
         var hor = Input.GetAxis("Horizontal");
         var ver = Input.GetAxis("Vertical");
@@ -265,7 +276,7 @@ public class PlayerController : MonoBehaviour
         #endregion Jump and Falling anim
 
         #region Attack anims
-        if (Input.GetButton("PS4_Triangle"))
+        if (Input.GetButton("PS4_Triangle") && attackEnable)
         {
             isAttacking = true;
             anim.applyRootMotion = true;
@@ -296,7 +307,10 @@ public class PlayerController : MonoBehaviour
 
         #endregion
 
-
+        if (Input.GetButtonDown("PS4_Triangle") && attackComboEnable)
+        {
+            ComboStart();
+        }
     }
 
     private void FixedUpdate()
@@ -320,7 +334,7 @@ public class PlayerController : MonoBehaviour
         Vector3 direction = hor * right + ver * forward;
         direction = direction * speed * Time.deltaTime;
 
-        if(isAttacking || isRolling)
+        if(isAttacking || isRolling || isComboAttacking)
         {
             direction = Vector3.zero;
         }
@@ -348,7 +362,7 @@ public class PlayerController : MonoBehaviour
             {
                 float angle = Quaternion.Angle(transform.rotation, Quaternion.LookRotation(dir));
 
-                if (angle != 0 && !isAttacking && !isRolling)
+                if (angle != 0 && !isAttacking && !isRolling && !isComboAttacking)
                 {
                     //rb.rotation = Quaternion.Slerp(transform.rotation, Quaternion.LookRotation(dir), turn_speed * Time.deltaTime);
 
@@ -551,4 +565,67 @@ public class PlayerController : MonoBehaviour
             
     }
     #endregion
+
+    public void ComboStart()
+    {
+        if(canAttack)
+        {
+            attackCount++;
+        }
+
+        if(attackCount == 1)
+        {
+            anim.SetInteger("AttackCount", 1);
+            anim.applyRootMotion = true;
+            isComboAttacking = true;
+        }
+    }
+
+    public void ComboCheck()
+    {
+        canAttack = false;
+
+        if(anim.GetCurrentAnimatorStateInfo(0).IsName("Attack Combo 1") && attackCount == 1)
+        {
+            anim.SetInteger("AttackCount", 0);
+            canAttack = true;
+            attackCount = 0;
+            anim.applyRootMotion = false;
+            isComboAttacking = false;
+        }
+        else if(anim.GetCurrentAnimatorStateInfo(0).IsName("Attack Combo 1") && attackCount >= 2)
+        {
+            anim.SetInteger("AttackCount", 2);
+            canAttack = true;
+        }
+        else if (anim.GetCurrentAnimatorStateInfo(0).IsName("Attack Combo 2") && attackCount == 2)
+        {
+            anim.SetInteger("AttackCount", 0);
+            canAttack = true;
+            attackCount = 0;
+            anim.applyRootMotion = false;
+            isComboAttacking = false;
+        }
+        else if (anim.GetCurrentAnimatorStateInfo(0).IsName("Attack Combo 2") && attackCount >= 3)
+        {
+            anim.SetInteger("AttackCount", 3);
+            canAttack = true;
+        }
+        else if (anim.GetCurrentAnimatorStateInfo(0).IsName("Attack Combo 3"))
+        {
+            anim.SetInteger("AttackCount", 0);
+            canAttack = true;
+            attackCount = 0;
+            anim.applyRootMotion = false;
+            isComboAttacking = false;
+        }
+        else
+        {
+            anim.SetInteger("AttackCount", 0);
+            canAttack = true;
+            attackCount = 0;
+            anim.applyRootMotion = false;
+            isComboAttacking = false;
+        }
+    }
 }

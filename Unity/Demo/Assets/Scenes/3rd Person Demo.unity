@@ -263,6 +263,7 @@ MonoBehaviour:
   dash_effect: {fileID: 863014831}
   surface: {fileID: 1393332197}
   joint: {fileID: 408099676}
+  attackEnable: 0
   isAttacking: 0
   attack: {fileID: -203655887218126122, guid: 427294978313e5749bd8a76d854eaa4a, type: 3}
   rollEnable: 1
@@ -272,6 +273,9 @@ MonoBehaviour:
   isJumping: 0
   jumpClip: {fileID: -203655887218126122, guid: c28f60665a9f346498096103f9f0f240,
     type: 3}
+  attackComboEnable: 1
+  attackCount: 0
+  canAttack: 1
 --- !u!136 &104783780
 CapsuleCollider:
   m_ObjectHideFlags: 0

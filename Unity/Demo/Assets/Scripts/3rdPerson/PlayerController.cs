@@ -5,9 +5,10 @@ using UnityEngine;
 public class PlayerController : MonoBehaviour
 {
     /* TODO
-     *      - Better Jump root motion
-     *      - Combo Attacks
-     *      - Attack/Roll from strafe
+     *      - better camera follow on jump
+     *      - heavy attack
+     *      - better slopes again
+     *      - fix jump animation when falling
      *      
      *      - SEPERATE SCRIPT TO SMALLER ONES
      *          
@@ -34,6 +35,9 @@ public class PlayerController : MonoBehaviour
      *      - Added Rolling
      *      - Jump Root Motion
      *      - Crouch Strafe Anims
+     *      - Combo Attacks
+     *      - Attack/Roll from strafe
+     *      - Better Jump root anim
      */
 
     [Header("Speed Settings")]
@@ -300,17 +304,21 @@ public class PlayerController : MonoBehaviour
         {
             isJumping = true;
             anim.applyRootMotion = true;
+            rb.useGravity = false;
             anim.SetBool("isJumpingRoot", true);
             StartCoroutine(JumpingAnim());
         }
         #endregion Jump Anim
 
-        #endregion
-
+        #region Attack Combo anims
         if (Input.GetButtonDown("PS4_Triangle") && attackComboEnable)
         {
             ComboStart();
         }
+        #endregion Attack Combo anims
+
+        #endregion
+
     }
 
     private void FixedUpdate()
@@ -340,9 +348,6 @@ public class PlayerController : MonoBehaviour
         }
 
         rb.MovePosition(transform.position + direction);
-
-        //ray_start = new Vector3(ray_debugger.position.x, ray_debugger.position.y, ray_debugger.position.z);
-        //Debug.DrawRay(ray_start, direction * 10, Color.magenta);
 
         #endregion
 
@@ -540,11 +545,24 @@ public class PlayerController : MonoBehaviour
 
         isJumping = false;
         anim.applyRootMotion = false;
+        rb.useGravity = true;
         anim.SetBool("isJumpingRoot", false);
     }
     #endregion
 
     #region Collision Functions
+
+    private void OnCollisionEnter(Collision collision)
+    {
+        // stops rigidbody from spinning after collision
+        if (collision.collider.tag == "Ground")
+        {
+            rb.angularVelocity = Vector3.zero;
+            rb.velocity = Vector3.zero;
+        }
+
+    }
+
     private void OnCollisionStay(Collision collision)
     {
         if(isGrounded == false && collision.collider.tag == "Ground")
@@ -554,18 +572,17 @@ public class PlayerController : MonoBehaviour
         }
     }
 
-    private void OnCollisionEnter(Collision collision)
+    private void OnCollisionExit(Collision collision)
     {
-        // stops rigidbody from spinning after collision
         if(collision.collider.tag == "Ground")
         {
-            rb.angularVelocity = Vector3.zero;
-            rb.velocity = Vector3.zero;
+            isGrounded = false;
         }
-            
     }
+
     #endregion
 
+    #region Attack Combo Functions
     public void ComboStart()
     {
         if(canAttack)
@@ -628,4 +645,5 @@ public class PlayerController : MonoBehaviour
             isComboAttacking = false;
         }
     }
+    #endregion Attack Combo Functions
 }

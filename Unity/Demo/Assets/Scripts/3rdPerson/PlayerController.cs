@@ -126,9 +126,23 @@ public class PlayerController : MonoBehaviour
     public bool attackComboEnable;
     public int attackCount;
     public bool canAttack;
+
+    [Header("Better Slope Check")]
+    public LayerMask ground;
+    public float maxGroundAngle = 120;
+    public bool debug;
+    float groundAngle;
+    RaycastHit hitSlopeInfo;
+    public bool isGroundSlopeCheck;
     
     Rigidbody rb;
     Transform cam;
+
+    Collider m_Collider;
+    Vector3 m_Size;
+
+    Vector3 direction;
+    Vector3 dir;
 
     private void Start()
     {
@@ -136,13 +150,13 @@ public class PlayerController : MonoBehaviour
         cam = Camera.main.transform;
 
         dash_effect.SetActive(false);
+
+        m_Collider = GetComponent<Collider>();
+        m_Size = m_Collider.bounds.size;
     }
 
     private void Update()
     {
-
-        //Debug.Log(rb.velocity.y);
-
         var hor = Input.GetAxis("Horizontal");
         var ver = Input.GetAxis("Vertical");
 
@@ -311,7 +325,7 @@ public class PlayerController : MonoBehaviour
         #endregion Jump Anim
 
         #region Attack Combo anims
-        if (Input.GetButtonDown("PS4_Triangle") && attackComboEnable)
+        if (Input.GetButtonDown("PS4_Triangle") && attackComboEnable && !isCrouching && !isStrafe && !isRolling)
         {
             ComboStart();
         }
@@ -323,31 +337,54 @@ public class PlayerController : MonoBehaviour
 
     private void FixedUpdate()
     {
+
         var hor = Input.GetAxis("Horizontal");
         var ver = Input.GetAxis("Vertical");
+
+        #region Slope Check
+        onSlope = OnSlope();
+        CalculateSlopeAngle();
+        CheckSlope();
+        DrawDebugLines();
+        #endregion
 
         #region General Movement
 
         Vector3 forward = cam.forward;
         Vector3 right = cam.right;
 
-        if(!onSlope && !isDashing)
-        {
-            forward.y = 0f;
-            right.y = 0f;
-        }
-        //forward.y = 0f;
-        //right.y = 0f;
+        //if(!onSlope && !isDashing)
+        //{
+        //    forward.y = 0f;
+        //    right.y = 0f;
+        //}
+        forward.y = 0f;
+        right.y = 0f;
 
-        Vector3 direction = hor * right + ver * forward;
+        //Vector3 direction = hor * right + ver * forward;
+
+        direction = hor * right + ver * forward;
         direction = direction * speed * Time.deltaTime;
 
-        if(isAttacking || isRolling || isComboAttacking)
+        if(isAttacking || isRolling || isComboAttacking || groundAngle >= maxGroundAngle)
         {
             direction = Vector3.zero;
         }
 
+        if(onSlope && !isStrafe)
+        {
+            direction = Vector3.Cross(hitSlopeInfo.normal, -transform.right);
+            direction = direction * speed * Time.deltaTime;
+        }
+
+        if(onSlope && isStrafe)
+        {
+            Vector3 tmp = Vector3.Cross(hitSlopeInfo.normal, direction);
+            direction = Vector3.Cross(tmp, hitSlopeInfo.normal);
+        }
+
         rb.MovePosition(transform.position + direction);
+
 
         #endregion
 
@@ -360,7 +397,8 @@ public class PlayerController : MonoBehaviour
         {
             dir_pos = transform.position + (right * hor) + (forward * ver);
 
-            Vector3 dir = dir_pos - transform.position;
+            //Vector3 dir = dir_pos - transform.position;
+            dir = dir_pos - transform.position;
             dir.y = 0;
 
             if (hor != 0 || ver != 0)
@@ -383,25 +421,11 @@ public class PlayerController : MonoBehaviour
             rb.MoveRotation(Quaternion.Euler(0, cam.eulerAngles.y, 0));
         }
         #endregion
-
-        #region Slope Check
-        onSlope = OnSlope();
-
-        /*
-        if (onSlope)
-        {
-            //rb.AddForce(Vector3.down * slope_force);
-            //rb.velocity = Vector3.down * slope_force;
-
-            rb.AddForce(-transform.up * slope_force);
-        }
-        */
-        #endregion
-
+       
         #region Inputs Physics Based
 
         #region Dash
-        
+
         dash_timer += Time.deltaTime;
 
         if (dash_timer > dash_cooldown)
@@ -467,7 +491,7 @@ public class PlayerController : MonoBehaviour
     }
 
 
-    #region Hover | Jump | Slope
+    #region Hover | Jump
     void Hover(float hover_force, ForceMode type)
     {
         rb.AddRelativeForce(transform.up * hover_force, type);
@@ -482,20 +506,6 @@ public class PlayerController : MonoBehaviour
         rb.AddRelativeForce(transform.up * jump_force, type);
     }
 
-    bool OnSlope()
-    {
-        RaycastHit hit;
-
-        if (Physics.Raycast(transform.position, Vector3.down, out hit, slope_ray_leng))
-        {
-            if (hit.normal != Vector3.up)
-            {
-                return true;
-            }
-        }
-
-        return false;
-    }
     #endregion
 
     #region IEnumerators
@@ -646,4 +656,65 @@ public class PlayerController : MonoBehaviour
         }
     }
     #endregion Attack Combo Functions
+
+    #region Better Slope Check
+
+    bool OnSlope()
+    {
+        RaycastHit hit;
+
+        if (Physics.Raycast(transform.position, Vector3.down, out hit, m_Size.y))
+        {
+            if (hit.normal != Vector3.up)
+            {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    void CalculateForwardRay()
+    {
+        if (!onSlope)
+        {
+            //direction = transform.forward;
+        }
+        else {
+            direction = Vector3.Cross(hitSlopeInfo.normal, -transform.right);
+        }
+           
+    }
+
+    void CalculateSlopeAngle()
+    {
+        if(onSlope)
+        {
+            groundAngle = Vector3.Angle(hitSlopeInfo.normal, transform.forward);
+        }
+            
+    }
+
+    void CheckSlope()
+    {
+        if(Physics.Raycast(transform.position, -Vector3.up * 2, out hitSlopeInfo, m_Size.y, ground))
+        {
+            //isGroundSlopeCheck = true;
+        }
+        else
+        {
+            //isGroundSlopeCheck = false;
+        }
+    }
+
+    void DrawDebugLines()
+    {
+        if(debug)
+        {
+            Debug.DrawLine(transform.position, transform.position + direction * m_Size.y * 10, Color.blue);
+            Debug.DrawLine(transform.position, transform.position - Vector3.up * m_Size.y, Color.green);
+        }
+    }
+
+    #endregion
 }

@@ -188,7 +188,7 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 33064147}
-  m_LocalRotation: {x: 0.06433937, y: 0.0000000042926835, z: -2.7676786e-10, w: 0.99792814}
+  m_LocalRotation: {x: 0.06433937, y: -0.000000004292683, z: 2.7675603e-10, w: 0.99792814}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
@@ -231,7 +231,7 @@ MonoBehaviour:
   walk_speed: 5
   run_speed: 10
   speed: 0
-  jumpEnable: 1
+  jumpEnable: 0
   hasJumped: 0
   isGrounded: 0
   jump_force: 5
@@ -277,6 +277,12 @@ MonoBehaviour:
   attackComboEnable: 1
   attackCount: 0
   canAttack: 1
+  ground:
+    serializedVersion: 2
+    m_Bits: 512
+  maxGroundAngle: 120
+  debug: 1
+  isGroundSlopeCheck: 0
 --- !u!136 &104783780
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -420,7 +426,7 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 241650104}
-  m_LocalRotation: {x: 0.06433938, y: 0.000000008585366, z: -5.5352395e-10, w: 0.9979281}
+  m_LocalRotation: {x: 0.06433938, y: -0.000000008585366, z: 5.5352395e-10, w: 0.9979281}
   m_LocalPosition: {x: -2.84, y: 2.42, z: -14.22}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
@@ -476,7 +482,7 @@ GameObject:
   - component: {fileID: 264017459}
   - component: {fileID: 264017458}
   - component: {fileID: 264017457}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: slope
   m_TagString: Ground
   m_Icon: {fileID: 0}
@@ -549,7 +555,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 264017456}
   m_LocalRotation: {x: 0, y: 0, z: 0.2588191, w: 0.9659258}
-  m_LocalPosition: {x: 1.04, y: 0.74, z: 6.72}
+  m_LocalPosition: {x: 1.047, y: 0.722, z: 6.72}
   m_LocalScale: {x: 6.74, y: 1, z: 5.0061}
   m_Children: []
   m_Father: {fileID: 0}
@@ -678,7 +684,7 @@ GameObject:
   - component: {fileID: 384407353}
   - component: {fileID: 384407352}
   - component: {fileID: 384407351}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: Platform
   m_TagString: Ground
   m_Icon: {fileID: 0}
@@ -751,7 +757,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 384407350}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 7.07, y: 2.35, z: 6.72}
+  m_LocalPosition: {x: 7.08, y: 2.338, z: 6.72}
   m_LocalScale: {x: 6.74, y: 1, z: 5.0061}
   m_Children: []
   m_Father: {fileID: 0}
@@ -1205,7 +1211,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_CollideAgainst:
     serializedVersion: 2
-    m_Bits: 1
+    m_Bits: 513
   m_IgnoreTag: Player
   m_TransparentLayers:
     serializedVersion: 2
@@ -6140,7 +6146,7 @@ GameObject:
   - component: {fileID: 1022560056}
   - component: {fileID: 1022560055}
   - component: {fileID: 1022560054}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: obstacle
   m_TagString: Ground
   m_Icon: {fileID: 0}
@@ -6438,7 +6444,7 @@ GameObject:
   - component: {fileID: 1623859057}
   - component: {fileID: 1623859056}
   - component: {fileID: 1623859055}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: Ground
   m_TagString: Ground
   m_Icon: {fileID: 0}

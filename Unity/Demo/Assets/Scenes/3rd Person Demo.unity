@@ -188,7 +188,7 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 33064147}
-  m_LocalRotation: {x: 0.06433937, y: -0.000000004292683, z: 2.7675603e-10, w: 0.99792814}
+  m_LocalRotation: {x: 0.06433937, y: 0.000000004358129, z: -0.000000001291866, w: 0.99792814}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
@@ -205,10 +205,17 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 104783782}
+  - component: {fileID: 104783786}
   - component: {fileID: 104783779}
   - component: {fileID: 104783783}
   - component: {fileID: 104783780}
   - component: {fileID: 104783781}
+  - component: {fileID: 104783784}
+  - component: {fileID: 104783785}
+  - component: {fileID: 104783787}
+  - component: {fileID: 104783788}
+  - component: {fileID: 104783789}
+  - component: {fileID: 104783790}
   m_Layer: 0
   m_Name: PlayerController
   m_TagString: Player
@@ -228,61 +235,30 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6729f90671010194ba7afb3cebeb4d3b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  isGrounded: 0
   walk_speed: 5
   run_speed: 10
   speed: 0
-  jumpEnable: 0
-  hasJumped: 0
-  isGrounded: 0
-  jump_force: 5
-  jump_force_type: 1
-  crouchEnable: 1
-  isCrouching: 0
-  crouch_speed: 3
-  hoverEnable: 0
-  hover_force: 50
-  clamp_hover: 5
-  hover_force_type: 0
-  turn_speed: 0
+  turn_speed: 50
   anim: {fileID: 104783783}
   InputMagn: 0
   onSlope: 0
   slope_force: 10
   slope_ray_leng: 5
-  isStrafe: 0
-  ray_debugger: {fileID: 847411000}
-  dashEnable: 0
-  canDash: 1
-  isDashing: 0
-  dash_force: 200
-  dash_cooldown: 2
-  dash_timer: 0
-  dash_duration: 0.33
-  dash_start: 0
-  dash_force_type: 1
-  dash_effect: {fileID: 863014831}
-  surface: {fileID: 1393332197}
-  joint: {fileID: 408099676}
-  attackEnable: 0
-  isAttacking: 0
-  attack: {fileID: -203655887218126122, guid: 427294978313e5749bd8a76d854eaa4a, type: 3}
-  rollEnable: 1
-  isRolling: 0
-  roll: {fileID: -203655887218126122, guid: 11f217c5d602a5a4d9d99f2aec64ae4a, type: 3}
-  jumpRootEnable: 0
-  isJumping: 0
-  jumpClip: {fileID: -203655887218126122, guid: 0f38dd35c40607f46b16d4deae92f042,
-    type: 3}
-  isComboAttacking: 0
-  attackComboEnable: 1
-  attackCount: 0
-  canAttack: 1
   ground:
     serializedVersion: 2
     m_Bits: 512
   maxGroundAngle: 120
   debug: 1
   isGroundSlopeCheck: 0
+  rb: {fileID: 0}
+  cam: {fileID: 0}
+  ver: 0
+  hor: 0
+  forward: {x: 0, y: 0, z: 0}
+  right: {x: 0, y: 0, z: 0}
+  playerInputManager: {fileID: 104783786}
+  playerAnims: {fileID: 104783784}
 --- !u!136 &104783780
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -325,7 +301,6 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 286675169}
-  - {fileID: 847411000}
   - {fileID: 863014834}
   m_Father: {fileID: 0}
   m_RootOrder: 6
@@ -349,6 +324,151 @@ Animator:
   m_HasTransformHierarchy: 1
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorControllerStateOnDisable: 0
+--- !u!114 &104783784
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 104783778}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d6da1b004588e764794a3aa3522229cf, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  playerController: {fileID: 104783779}
+  playerInputManager: {fileID: 104783786}
+  playerStrafe: {fileID: 104783785}
+  playerHover: {fileID: 104783787}
+  playerCrouch: {fileID: 104783789}
+  isJumping: 0
+  jumpClip: {fileID: -203655887218126122, guid: 0f38dd35c40607f46b16d4deae92f042,
+    type: 3}
+  isRolling: 0
+  roll: {fileID: -203655887218126122, guid: 11f217c5d602a5a4d9d99f2aec64ae4a, type: 3}
+  isAttacking: 0
+  attack: {fileID: -203655887218126122, guid: 427294978313e5749bd8a76d854eaa4a, type: 3}
+  isComboAttacking: 0
+  attackCount: 0
+  canAttack: 1
+--- !u!114 &104783785
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 104783778}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 87b8b45e913982b4288d4308d668997d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  playerController: {fileID: 104783779}
+  playerInputManager: {fileID: 104783786}
+  isStrafing: 0
+--- !u!114 &104783786
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 104783778}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: be5726a58683cac428f0ededba6eba49, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  attackEnable: 0
+  comboAttackEnable: 1
+  crouchEnable: 0
+  dashEnable: 0
+  hoverEnable: 0
+  jumpEnable: 0
+  jumpRootEnable: 1
+  rollEnable: 1
+  strafeEnable: 0
+  isCrouching: 0
+  isStrafing: 0
+  isDashing: 0
+  playerStrafe: {fileID: 104783785}
+  playerDash: {fileID: 104783788}
+  playerCrouch: {fileID: 104783789}
+--- !u!114 &104783787
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 104783778}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fd1517c0c440bab4082b6aba92594bf4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  playerController: {fileID: 104783779}
+  playerInputManager: {fileID: 104783786}
+  hoverForce: 5
+  clampHoverForce: 10
+  hoverForceMode: 0
+  isHover: 0
+--- !u!114 &104783788
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 104783778}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ec513e1373bec2e419d01eca3e44e52f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  playerController: {fileID: 104783779}
+  playerInputManager: {fileID: 104783786}
+  isDashing: 0
+  canDash: 0
+  dashForce: 50
+  dashCoolDown: 2
+  dashTimer: 0
+  dashDuration: 0.33
+  dashStart: 0
+  dashForceMode: 1
+  dashEffect: {fileID: 863014831}
+  skin: {fileID: 1393332197}
+  joint: {fileID: 408099676}
+--- !u!114 &104783789
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 104783778}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2c5775b51b5b1f744a58be76e5d14822, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  playerController: {fileID: 104783779}
+  playerInputManager: {fileID: 104783786}
+  crouchSpeed: 2.5
+  isCrouching: 0
+--- !u!114 &104783790
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 104783778}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0e3a261f6ed48fe4dab70d2ecc985c50, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  playerController: {fileID: 104783779}
+  playerInputManager: {fileID: 104783786}
+  hasJumped: 0
+  jumpForce: 20
+  jumpForceMode: 1
 --- !u!1 &241650104
 GameObject:
   m_ObjectHideFlags: 0
@@ -426,7 +546,7 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 241650104}
-  m_LocalRotation: {x: 0.06433938, y: -0.000000008585366, z: 5.5352395e-10, w: 0.9979281}
+  m_LocalRotation: {x: 0.06433938, y: 0.000000008585366, z: -5.5352395e-10, w: 0.9979281}
   m_LocalPosition: {x: -2.84, y: 2.42, z: -14.22}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
@@ -1227,36 +1347,6 @@ MonoBehaviour:
   m_Damping: 2
   m_DampingWhenOccluded: 1
   m_OptimalTargetDistance: 0
---- !u!1 &847410999
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 847411000}
-  m_Layer: 0
-  m_Name: Ray Debugger
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &847411000
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 847410999}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 1.671, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_Children: []
-  m_Father: {fileID: 104783782}
-  m_RootOrder: 1
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &863014831
 GameObject:
   m_ObjectHideFlags: 0
@@ -1269,7 +1359,7 @@ GameObject:
   - component: {fileID: 863014833}
   - component: {fileID: 863014832}
   m_Layer: 0
-  m_Name: Particle System
+  m_Name: Dash Effect
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -6007,7 +6097,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 104783782}
-  m_RootOrder: 2
+  m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: -90, y: 0, z: 0}
 --- !u!1 &889886861
 GameObject:
@@ -6299,7 +6389,8 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1418556997}
-  m_LocalRotation: {x: 0.046224922, y: 7.0813373e-16, z: -1.530293e-14, w: 0.99893105}
+  m_LocalRotation: {x: 0.046224914, y: -0.0000000020838555, z: -0.0000000012975407,
+    w: 0.9989311}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:

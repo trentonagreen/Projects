@@ -59,6 +59,7 @@ public class PlayerController : MonoBehaviour
     [Header("Crouch Settings")]
     public bool crouchEnable;
     public bool isCrouching;
+    public bool crouchToggle;
     public float crouch_speed;
 
     [Header("Hover Settings")]
@@ -145,7 +146,8 @@ public class PlayerController : MonoBehaviour
 
     [Header("Lock on Target Settings")]
     public bool enableLockOn;
-    public bool lockedOnTarget;
+    public bool isLockedOnTarget;
+    public bool lockOnToggle;
     public GameObject lockOnTarget;
     
     Rigidbody rb;
@@ -195,8 +197,10 @@ public class PlayerController : MonoBehaviour
         #endregion Sprint
 
         #region Strafe
-        if (Input.GetButton("PS4_L1"))
+        // can only strafe when locked on target
+        if (Input.GetButtonDown("PS4_L1"))
         {
+            Debug.Log("Pressing L1");
             isStrafe = true;
         }
         else
@@ -207,13 +211,17 @@ public class PlayerController : MonoBehaviour
 
         #region Crouch
 
-        if(Input.GetButtonDown("PS4_R1") && crouchEnable)
+        if(Input.GetButtonDown("PS4_L3") && crouchEnable)
+        {          
+            crouchToggle = !crouchToggle;
+        }
+
+        if(crouchToggle)
         {
             isCrouching = true;
             anim.SetBool("isCrouching", isCrouching);
         }
-        if(Input.GetButtonUp("PS4_R1") && crouchEnable)
-        //else
+        else
         {
             isCrouching = false;
             anim.SetBool("isCrouching", isCrouching);
@@ -221,14 +229,24 @@ public class PlayerController : MonoBehaviour
 
         #endregion Crouch
 
-        if(enableLockOn && Input.GetButtonDown("PS4_R1"))
+        #region Lock On
+        if(enableLockOn && Input.GetButtonDown("PS4_R3"))
         {
-            lockedOnTarget = true;
+            lockOnToggle = !lockOnToggle;
         }
-        if (Input.GetButtonUp("PS4_R1") && enableLockOn)
+
+        if (lockOnToggle)
         {
-            lockedOnTarget = false;
+            isLockedOnTarget = true;
+            isStrafe = true;
         }
+        else if (!lockOnToggle && Input.GetButtonUp("PS4_L1"))
+        {
+            isLockedOnTarget = false;
+            isStrafe = false;
+        }
+
+        #endregion Lock On
 
         #endregion
 
@@ -243,7 +261,6 @@ public class PlayerController : MonoBehaviour
         // stops the character from spinning after root motion animation
         if(hor == 0 && ver == 0)
         {
-            //Debug.Log("NO movement input");
             rb.angularVelocity = Vector3.zero;
         }
 
@@ -259,11 +276,6 @@ public class PlayerController : MonoBehaviour
         Vector3 forward = cam.forward;
         Vector3 right = cam.right;
 
-        //if(!onSlope && !isDashing)
-        //{
-        //    forward.y = 0f;
-        //    right.y = 0f;
-        //}
         forward.y = 0f;
         right.y = 0f;
 
@@ -299,13 +311,17 @@ public class PlayerController : MonoBehaviour
         //Vector3 forward = cam.forward;
         //Vector3 right = cam.right;
 
-        if(isStrafe)
+        if(isStrafe && !isLockedOnTarget)
         {
             rb.MoveRotation(Quaternion.Euler(0, cam.eulerAngles.y, 0));
         }
-        else if(lockedOnTarget)
+        else if(isLockedOnTarget && isStrafe)
         {
-            transform.LookAt(lockOnTarget.transform);
+            Transform target = lockOnTarget.transform;
+            Vector3 relPos = target.position - transform.position;
+            relPos.y = 0;
+
+            rb.MoveRotation(Quaternion.LookRotation(relPos, Vector3.up));
         }
         else
         {
@@ -414,11 +430,6 @@ public class PlayerController : MonoBehaviour
         #endregion Strafe anim
 
         #region Falling anim
-        //if (rb.velocity.y > 0.1 || rb.velocity.y < -1f)
-        //{
-        //    anim.SetBool("isGrounded", false);
-        //    isGrounded = false;
-        //}
 
         if (rb.velocity.y < -10f)
         {
@@ -426,7 +437,7 @@ public class PlayerController : MonoBehaviour
             isGrounded = false;
         }
 
-        if (onSlope) //&& rb.velocity.y > -0.1)
+        if (onSlope)
         {
             anim.SetBool("onSlope", true);
         }
@@ -479,15 +490,13 @@ public class PlayerController : MonoBehaviour
             StartCoroutine(JumpingAnim());
         }
         #endregion Jump Anim
-
+     
         #region Attack Combo anims
-        if (Input.GetButtonDown("PS4_Square") && attackComboEnable && !isCrouching && !isStrafe && !isRolling)
+        if (Input.GetButtonDown("PS4_Square") && attackComboEnable && !isCrouching && !isRolling)
         {
             ComboStart();
         }
-        #endregion Attack Combo anims
-
-
+        #endregion Attack Combo anims     
 
         #endregion
 
@@ -608,9 +617,14 @@ public class PlayerController : MonoBehaviour
     #region Attack Combo Functions
     public void ComboStart()
     {
-        if(canAttack)
-        {
+        if(canAttack && attackCount < 3)
+        {           
             attackCount++;
+            Debug.Log("Attack count increment: " + attackCount);
+        }
+        else
+        {
+            attackCount = 0;
         }
 
         if(attackCount == 1)
@@ -627,9 +641,9 @@ public class PlayerController : MonoBehaviour
 
         if(anim.GetCurrentAnimatorStateInfo(0).IsName("Attack Combo 1") && attackCount == 1)
         {
-            anim.SetInteger("AttackCount", 0);
-            canAttack = true;
             attackCount = 0;
+            anim.SetInteger("AttackCount", 0);
+            canAttack = true;            
             anim.applyRootMotion = false;
             isComboAttacking = false;
         }
@@ -640,9 +654,9 @@ public class PlayerController : MonoBehaviour
         }
         else if (anim.GetCurrentAnimatorStateInfo(0).IsName("Attack Combo 2") && attackCount == 2)
         {
-            anim.SetInteger("AttackCount", 0);
-            canAttack = true;
             attackCount = 0;
+            anim.SetInteger("AttackCount", 0);
+            canAttack = true;          
             anim.applyRootMotion = false;
             isComboAttacking = false;
         }
@@ -653,17 +667,17 @@ public class PlayerController : MonoBehaviour
         }
         else if (anim.GetCurrentAnimatorStateInfo(0).IsName("Attack Combo 3"))
         {
-            anim.SetInteger("AttackCount", 0);
-            canAttack = true;
             attackCount = 0;
+            anim.SetInteger("AttackCount", 0);
+            canAttack = true;            
             anim.applyRootMotion = false;
             isComboAttacking = false;
         }
         else
         {
-            anim.SetInteger("AttackCount", 0);
-            canAttack = true;
             attackCount = 0;
+            anim.SetInteger("AttackCount", 0);
+            canAttack = true;           
             anim.applyRootMotion = false;
             isComboAttacking = false;
         }

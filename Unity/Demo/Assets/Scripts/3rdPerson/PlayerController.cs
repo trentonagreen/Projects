@@ -5,10 +5,11 @@ using UnityEngine;
 public class PlayerController : MonoBehaviour
 {
     /* TODO
-     *      - heavy attack
      *      - lock on camera
      *      - rolling on slopes
-     *      - fix jump root motion animation when falling
+     *      - fix rolling attack to only be true after roll animation
+     *          make similar to attack combo
+     *      - toggle a button for crouch and lock on
      *      
      *      - SEPERATE SCRIPT TO SMALLER ONES
      *          
@@ -39,6 +40,7 @@ public class PlayerController : MonoBehaviour
      *      - Attack/Roll from strafe
      *      - Better Jump root anim
      *      - better slopes again
+     *      - rolling attack
      */
 
     [Header("Speed Settings")]
@@ -114,6 +116,11 @@ public class PlayerController : MonoBehaviour
     public bool isRolling;
     public AnimationClip roll;
 
+    [Header("Rolling Attack")]
+    public bool rollAttackEnable;
+    public bool isRollAttacking;
+    public AnimationClip rollAttack;
+
     [Header("Jumping Root Anim")]
     public bool jumpRootEnable;
     public bool isJumping;
@@ -128,13 +135,18 @@ public class PlayerController : MonoBehaviour
     public int attackCount;
     public bool canAttack;
 
-    [Header("Better Slope Check")]
+    [Header("Better Slope Check Settings")]
     public LayerMask ground;
     public float maxGroundAngle = 120;
     public bool debug;
     public float groundAngle;
     RaycastHit hitSlopeInfo;
     public bool isGroundSlopeCheck;
+
+    [Header("Lock on Target Settings")]
+    public bool enableLockOn;
+    public bool lockedOnTarget;
+    public GameObject lockOnTarget;
     
     Rigidbody rb;
     Transform cam;
@@ -164,7 +176,7 @@ public class PlayerController : MonoBehaviour
         #region Inputs
 
         #region Sprint
-        if (Input.GetButton("PS4_Circle"))
+        if (Input.GetButton("PS4_X") && !jumpEnable && !jumpRootEnable && !hoverEnable)
         {
             speed = run_speed;
         }
@@ -183,7 +195,7 @@ public class PlayerController : MonoBehaviour
         #endregion Sprint
 
         #region Strafe
-        if (Input.GetButton("PS4_R1"))
+        if (Input.GetButton("PS4_L1"))
         {
             isStrafe = true;
         }
@@ -195,12 +207,12 @@ public class PlayerController : MonoBehaviour
 
         #region Crouch
 
-        if (Input.GetButtonDown("PS4_L1") && crouchEnable)
+        if(Input.GetButtonDown("PS4_R1") && crouchEnable)
         {
             isCrouching = true;
             anim.SetBool("isCrouching", isCrouching);
         }
-        if(Input.GetButtonUp("PS4_L1") && crouchEnable)
+        if(Input.GetButtonUp("PS4_R1") && crouchEnable)
         //else
         {
             isCrouching = false;
@@ -208,6 +220,15 @@ public class PlayerController : MonoBehaviour
         }
 
         #endregion Crouch
+
+        if(enableLockOn && Input.GetButtonDown("PS4_R1"))
+        {
+            lockedOnTarget = true;
+        }
+        if (Input.GetButtonUp("PS4_R1") && enableLockOn)
+        {
+            lockedOnTarget = false;
+        }
 
         #endregion
 
@@ -222,7 +243,7 @@ public class PlayerController : MonoBehaviour
         // stops the character from spinning after root motion animation
         if(hor == 0 && ver == 0)
         {
-            Debug.Log("NO movement input");
+            //Debug.Log("NO movement input");
             rb.angularVelocity = Vector3.zero;
         }
 
@@ -251,7 +272,7 @@ public class PlayerController : MonoBehaviour
         direction = hor * right + ver * forward;
         direction = direction * speed * Time.deltaTime;
 
-        if(isAttacking || isRolling || isComboAttacking || groundAngle >= maxGroundAngle)
+        if(isAttacking || isRolling || isComboAttacking || isRollAttacking || groundAngle >= maxGroundAngle)
         {
             direction = Vector3.zero;
         }
@@ -278,7 +299,15 @@ public class PlayerController : MonoBehaviour
         //Vector3 forward = cam.forward;
         //Vector3 right = cam.right;
 
-        if (!isStrafe)
+        if(isStrafe)
+        {
+            rb.MoveRotation(Quaternion.Euler(0, cam.eulerAngles.y, 0));
+        }
+        else if(lockedOnTarget)
+        {
+            transform.LookAt(lockOnTarget.transform);
+        }
+        else
         {
             dir_pos = transform.position + (right * hor) + (forward * ver);
 
@@ -292,18 +321,9 @@ public class PlayerController : MonoBehaviour
 
                 if (angle != 0 && !isAttacking && !isRolling && !isComboAttacking)
                 {
-                    //rb.rotation = Quaternion.Slerp(transform.rotation, Quaternion.LookRotation(dir), turn_speed * Time.deltaTime);
-
-                    //transform.rotation = Quaternion.LookRotation(dir);
                     rb.MoveRotation(Quaternion.LookRotation(dir));
                 }
             }
-        }
-        // Force player to look in direction of camera
-        else
-        {
-            //transform.rotation = Quaternion.Euler(0, cam.eulerAngles.y, 0);
-            rb.MoveRotation(Quaternion.Euler(0, cam.eulerAngles.y, 0));
         }
         #endregion
        
@@ -319,7 +339,7 @@ public class PlayerController : MonoBehaviour
             canDash = true;
         }
 
-        if (Input.GetButtonDown("PS4_Square") && dashEnable && canDash == true)
+        if (Input.GetButtonDown("PS4_Circle") && dashEnable && canDash == true)
         {
             forward = cam.forward;
             right = cam.right;
@@ -420,7 +440,7 @@ public class PlayerController : MonoBehaviour
         #endregion Jump and Falling anim
 
         #region Attack anims
-        if (Input.GetButton("PS4_Triangle") && attackEnable)
+        if (Input.GetButton("PS4_Square") && attackEnable)
         {
             isAttacking = true;
             anim.applyRootMotion = true;
@@ -430,7 +450,7 @@ public class PlayerController : MonoBehaviour
         #endregion Attack anims
 
         #region Rolling anims
-        if (rollEnable && Input.GetButton("PS4_Square") && !isCrouching && !isStrafe && !isAttacking)
+        if (rollEnable && Input.GetButton("PS4_Circle") && !isCrouching && !isStrafe && !isAttacking)
         {
             isRolling = true;
             anim.applyRootMotion = true;
@@ -438,6 +458,16 @@ public class PlayerController : MonoBehaviour
             StartCoroutine(RollingAnim());
         }
         #endregion Rolling anims
+
+        #region Roll Attack
+        if (rollAttackEnable && isRolling && Input.GetButtonDown("PS4_Square"))
+        {
+            isRollAttacking = true;
+            anim.applyRootMotion = true;
+            anim.SetBool("isSlideAttacking", true);
+            StartCoroutine(RollAtackingAnim());
+        }
+        #endregion Roll Attack
 
         #region Jump Anim
         if (jumpRootEnable && Input.GetButton("PS4_X"))
@@ -451,16 +481,17 @@ public class PlayerController : MonoBehaviour
         #endregion Jump Anim
 
         #region Attack Combo anims
-        if (Input.GetButtonDown("PS4_Triangle") && attackComboEnable && !isCrouching && !isStrafe && !isRolling)
+        if (Input.GetButtonDown("PS4_Square") && attackComboEnable && !isCrouching && !isStrafe && !isRolling)
         {
             ComboStart();
         }
         #endregion Attack Combo anims
 
+
+
         #endregion
 
     }
-
 
     #region Hover | Jump
     void Hover(float hover_force, ForceMode type)
@@ -528,6 +559,15 @@ public class PlayerController : MonoBehaviour
         anim.applyRootMotion = false;
         rb.useGravity = true;
         anim.SetBool("isJumpingRoot", false);
+    }
+
+    private IEnumerator RollAtackingAnim()
+    {
+        yield return new WaitForSeconds(rollAttack.length);
+
+        isRollAttacking = false;
+        anim.applyRootMotion = false;
+        anim.SetBool("isSlideAttacking", false);
     }
     #endregion
 
@@ -651,7 +691,7 @@ public class PlayerController : MonoBehaviour
     {
         if (!onSlope)
         {
-            //direction = transform.forward;
+            direction = transform.forward;
         }
         else {
             direction = Vector3.Cross(hitSlopeInfo.normal, -transform.right);

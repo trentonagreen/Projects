@@ -236,7 +236,7 @@ MonoBehaviour:
   isGrounded: 0
   jump_force: 5
   jump_force_type: 1
-  crouchEnable: 1
+  crouchEnable: 0
   isCrouching: 0
   crouch_speed: 3
   hoverEnable: 0
@@ -269,6 +269,10 @@ MonoBehaviour:
   rollEnable: 1
   isRolling: 0
   roll: {fileID: -203655887218126122, guid: 11f217c5d602a5a4d9d99f2aec64ae4a, type: 3}
+  rollAttackEnable: 1
+  isRollAttacking: 0
+  rollAttack: {fileID: -203655887218126122, guid: 35b6aad43e5031a41b3fce7af0cbc56a,
+    type: 3}
   jumpRootEnable: 0
   isJumping: 0
   jumpClip: {fileID: -203655887218126122, guid: 0f38dd35c40607f46b16d4deae92f042,
@@ -284,6 +288,9 @@ MonoBehaviour:
   debug: 1
   groundAngle: 0
   isGroundSlopeCheck: 0
+  enableLockOn: 1
+  lockedOnTarget: 0
+  lockOnTarget: {fileID: 1022560053}
 --- !u!136 &104783780
 CapsuleCollider:
   m_ObjectHideFlags: 0

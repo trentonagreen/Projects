@@ -5,11 +5,11 @@ using UnityEngine;
 public class PlayerController : MonoBehaviour
 {
     /* TODO
-     *      - lock on camera
      *      - rolling on slopes
      *      - fix rolling attack to only be true after roll animation
      *          make similar to attack combo
-     *      - toggle a button for crouch and lock on
+     *      - improve attack combo anims, #2
+     *      - wait to settrigger until attack is done
      *      
      *      - SEPERATE SCRIPT TO SMALLER ONES
      *          
@@ -519,51 +519,6 @@ public class PlayerController : MonoBehaviour
         }
         #endregion Attack Combo anims  
 
-        /*
-        #region Better Attack Combo ?
-        if(Input.GetButtonDown("PS4_Square") && enableBetterCombo && !isCrouching && !isRolling && comboIdx < comboParams.Length)
-        {
-            isBetterComboAttacking = true;
-            Debug.Log(comboParams[comboIdx] + "trigger");
-
-            anim.SetTrigger(comboParams[comboIdx]);
-
-            comboIdx++;
-
-            resetTimer = 0f;
-
-            if (isBetterComboAttacking)
-            {
-                anim.applyRootMotion = true;
-            }
-            else
-            {
-                anim.applyRootMotion = false;
-            }
-        }
-        if(comboIdx > 0)
-        {
-            resetTimer += Time.deltaTime;
-            if(resetTimer > attackRate)
-            {
-                anim.SetTrigger("ResetAttack");
-                comboIdx = 0;
-
-                isBetterComboAttacking = false;
-            }
-
-            if (isBetterComboAttacking)
-            {
-                anim.applyRootMotion = true;
-            }
-            else
-            {
-                anim.applyRootMotion = false;
-            }
-        }
-
-        #endregion Better Attack Combo ?
-        */
         #endregion
 
     }
@@ -576,7 +531,7 @@ public class PlayerController : MonoBehaviour
             isBetterComboAttacking = true;
             Debug.Log(comboParams[comboIdx] + "trigger");
 
-            anim.SetTrigger(comboParams[comboIdx]);
+            anim.SetTrigger(comboParams[comboIdx]);       
 
             comboIdx++;
 

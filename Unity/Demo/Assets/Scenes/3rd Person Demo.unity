@@ -188,7 +188,7 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 33064147}
-  m_LocalRotation: {x: 0.06433937, y: 0.0000000042926835, z: -2.7676786e-10, w: 0.99792814}
+  m_LocalRotation: {x: 0.06433937, y: -0.000000004292683, z: 2.7675603e-10, w: 0.99792814}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
@@ -279,7 +279,7 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 241650104}
-  m_LocalRotation: {x: 0.06433938, y: 0.000000008585366, z: -5.5352395e-10, w: 0.9979281}
+  m_LocalRotation: {x: 0.06433938, y: -0.000000008585366, z: 5.5352395e-10, w: 0.9979281}
   m_LocalPosition: {x: -2.84, y: 2.42, z: -14.22}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
@@ -1549,6 +1549,21 @@ PrefabInstance:
       propertyPath: lockOnTarget
       value: 
       objectReference: {fileID: 1022560053}
+    - target: {fileID: 4756114287066447777, guid: 33ff9eb1214de2747b972cef8f473691,
+        type: 3}
+      propertyPath: attackComboEnable
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4756114287066447777, guid: 33ff9eb1214de2747b972cef8f473691,
+        type: 3}
+      propertyPath: enableBetterCombo
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4756114287066447777, guid: 33ff9eb1214de2747b972cef8f473691,
+        type: 3}
+      propertyPath: attackRate
+      value: 2
+      objectReference: {fileID: 0}
     - target: {fileID: 4756114287066447783, guid: 33ff9eb1214de2747b972cef8f473691,
         type: 3}
       propertyPath: m_Constraints

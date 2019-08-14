@@ -149,6 +149,14 @@ public class PlayerController : MonoBehaviour
     public bool isLockedOnTarget;
     public bool lockOnToggle;
     public GameObject lockOnTarget;
+
+    [Header("Improved Combo?")]
+    public bool enableBetterCombo;
+    public bool isBetterComboAttacking;
+    public float attackRate;
+    public string[] comboParams;
+    public int comboIdx;
+    public float resetTimer;
     
     Rigidbody rb;
     Transform cam;
@@ -158,6 +166,14 @@ public class PlayerController : MonoBehaviour
 
     Vector3 direction;
     Vector3 dir;
+
+    private void Awake()
+    {
+        if(comboParams == null || (comboParams != null && comboParams.Length == 0))
+        {
+            comboParams = new string[] { "Attack1", "Attack2", "Attack3" };
+        }
+    }
 
     private void Start()
     {
@@ -478,6 +494,11 @@ public class PlayerController : MonoBehaviour
             anim.SetBool("isSlideAttacking", true);
             StartCoroutine(RollAtackingAnim());
         }
+
+        if(isRollAttacking)
+        {
+            anim.applyRootMotion = true;
+        }
         #endregion Roll Attack
 
         #region Jump Anim
@@ -496,7 +517,51 @@ public class PlayerController : MonoBehaviour
         {
             ComboStart();
         }
-        #endregion Attack Combo anims     
+        #endregion Attack Combo anims  
+
+        #region Better Attack Combo ?
+        if(Input.GetButtonDown("PS4_Square") && enableBetterCombo && !isCrouching && !isRolling && comboIdx < comboParams.Length)
+        {
+            isBetterComboAttacking = true;
+            Debug.Log(comboParams[comboIdx] + "trigger");
+
+            anim.SetTrigger(comboParams[comboIdx]);
+
+            comboIdx++;
+
+            resetTimer = 0f;
+
+            if (isBetterComboAttacking)
+            {
+                anim.applyRootMotion = true;
+            }
+            else
+            {
+                anim.applyRootMotion = false;
+            }
+        }
+        if(comboIdx > 0)
+        {
+            resetTimer += Time.deltaTime;
+            if(resetTimer > attackRate)
+            {
+                anim.SetTrigger("ResetAttack");
+                comboIdx = 0;
+
+                isBetterComboAttacking = false;
+            }
+
+            if (isBetterComboAttacking)
+            {
+                anim.applyRootMotion = true;
+            }
+            else
+            {
+                anim.applyRootMotion = false;
+            }
+        }
+
+        #endregion Better Attack Combo ?
 
         #endregion
 
@@ -630,6 +695,7 @@ public class PlayerController : MonoBehaviour
         if(attackCount == 1)
         {
             anim.SetInteger("AttackCount", 1);
+
             anim.applyRootMotion = true;
             isComboAttacking = true;
         }
@@ -643,6 +709,7 @@ public class PlayerController : MonoBehaviour
         {
             attackCount = 0;
             anim.SetInteger("AttackCount", 0);
+
             canAttack = true;            
             anim.applyRootMotion = false;
             isComboAttacking = false;

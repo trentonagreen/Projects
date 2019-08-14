@@ -519,6 +519,7 @@ public class PlayerController : MonoBehaviour
         }
         #endregion Attack Combo anims  
 
+        /*
         #region Better Attack Combo ?
         if(Input.GetButtonDown("PS4_Square") && enableBetterCombo && !isCrouching && !isRolling && comboIdx < comboParams.Length)
         {
@@ -562,9 +563,56 @@ public class PlayerController : MonoBehaviour
         }
 
         #endregion Better Attack Combo ?
-
+        */
         #endregion
 
+    }
+
+    private void LateUpdate()
+    {
+        #region Better Attack Combo ?
+        if (Input.GetButtonDown("PS4_Square") && enableBetterCombo && !isCrouching && !isRolling && comboIdx < comboParams.Length)
+        {
+            isBetterComboAttacking = true;
+            Debug.Log(comboParams[comboIdx] + "trigger");
+
+            anim.SetTrigger(comboParams[comboIdx]);
+
+            comboIdx++;
+
+            resetTimer = 0f;
+
+            if (isBetterComboAttacking)
+            {
+                anim.applyRootMotion = true;
+            }
+            else
+            {
+                anim.applyRootMotion = false;
+            }
+        }
+        if (comboIdx > 0)
+        {
+            resetTimer += Time.deltaTime;
+            if (resetTimer > attackRate)
+            {
+                anim.SetTrigger("ResetAttack");
+                comboIdx = 0;
+
+                isBetterComboAttacking = false;
+            }
+
+            if (isBetterComboAttacking)
+            {
+                anim.applyRootMotion = true;
+            }
+            else
+            {
+                anim.applyRootMotion = false;
+            }
+        }
+
+        #endregion Better Attack Combo ?
     }
 
     #region Hover | Jump

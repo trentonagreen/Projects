@@ -2,9 +2,14 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+/*
+ *  Root motion animation is going in the opposite direction
+ */
+
 public class Enemy : MonoBehaviour
 {
     public bool isPlayerInRange;
+    public bool isAttacking;
 
     public int moveSpeed;
 
@@ -21,13 +26,14 @@ public class Enemy : MonoBehaviour
 
     private void FixedUpdate()
     {
+        #region Movement and Rotation to chase player
         Transform target = playerTarget.transform;
         Vector3 direction = Vector3.MoveTowards(transform.position, target.position, moveSpeed * Time.deltaTime);
 
         Vector3 relpos = transform.position - target.position;
         relpos.y = 0;
 
-        if(!isPlayerInRange)
+        if(!isPlayerInRange && !isAttacking)
         {
             anim.SetBool("isChasing", true);
             rb.MovePosition(direction);
@@ -37,6 +43,21 @@ public class Enemy : MonoBehaviour
         {
             anim.SetBool("isChasing", false);
         }
+        #endregion
+
+        #region Attack Anims
+        if(isPlayerInRange)
+        {
+            isAttacking = true;
+
+            anim.SetTrigger("Attack1");
+            anim.applyRootMotion = true;
+        }
+        else
+        {
+            isAttacking = false;
+        }
+        #endregion
     }
 
     private void OnTriggerEnter(Collider other)
@@ -48,6 +69,7 @@ public class Enemy : MonoBehaviour
         }
     }
 
+    /*
     private void OnTriggerStay(Collider other)
     {
         if(other.tag == "Player")
@@ -56,6 +78,7 @@ public class Enemy : MonoBehaviour
             isPlayerInRange = true;
         }
     }
+    */
 
     private void OnTriggerExit(Collider other)
     {

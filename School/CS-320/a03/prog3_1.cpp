@@ -5,9 +5,9 @@
 #include <iostream>
 
 extern "C" {
-#include "lua.h"
-#include "lualib.h"
-#include "lauxlib.h"
+#include "lua-5.3.5/src/lua.h"
+#include "lua-5.3.5/src/lualib.h"
+#include "lua-5.3.5/src/lauxlib.h"
 }
 
 using namespace std;

@@ -6,3 +6,5 @@ div
 mod
 skip
 push 12
+save 15
+get 13

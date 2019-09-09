@@ -2,7 +2,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <unistd.h>
-#include <linux/limits.h> //PATH_MAX, on edoras: <linux/limits.h>
+#include <limits.h> //PATH_MAX, on edoras: <linux/limits.h>
 #include <sys/wait.h>
 #include <sys/types.h>
 #include "ll.h"
